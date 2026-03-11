@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Tracking - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Custom Styling -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .tracking-container {
+            max-width: 900px;
+            margin: var(--spacing-3xl) auto;
+        }
+
+        .tracking-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+        }
+
+        .tracking-header {
+            margin-bottom: var(--spacing-3xl);
+            padding-bottom: var(--spacing-xl);
+            border-bottom: 1px solid rgba(118, 153, 212, 0.1);
+        }
+
+        .order-id {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .order-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            background: linear-gradient(135deg, #2FB492 0%, #1FA391 100%);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-size: var(--font-size-sm);
+        }
+
+        .delivery-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .info-card {
+            background: rgba(118, 153, 212, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+        }
+
+        .info-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .tracking-timeline {
+            position: relative;
+            padding: var(--spacing-lg) 0;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .timeline-stage {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-3xl);
+            position: relative;
+        }
+
+        .timeline-stage:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 50px;
+            width: 2px;
+            height: 80px;
+            background: rgba(118, 153, 212, 0.2);
+        }
+
+        .timeline-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(118, 153, 212, 0.1);
+            border: 2px solid rgba(118, 153, 212, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
+        .timeline-dot.completed {
+            background: linear-gradient(135deg, #2FB492 0%, #1FA391 100%);
+            border-color: #2FB492;
+            color: white;
+        }
+
+        .timeline-dot.active {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            border-color: #7699D4;
+            color: white;
+            box-shadow: 0 0 20px rgba(118, 153, 212, 0.5);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(118, 153, 212, 0.5);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 30px rgba(118, 153, 212, 0.7);
+            }
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .timeline-description {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .timeline-time {
+            background: rgba(118, 153, 212, 0.05);
+            border-left: 3px solid #7699D4;
+            padding: var(--spacing-md) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .baker-contact {
+            background: rgba(118, 153, 212, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .contact-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .contact-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .contact-details h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .contact-details p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn {
+            flex: 1;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: var(--font-size-md);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(118, 153, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(118, 153, 212, 0.2);
+        }
+
+        .notification-banner {
+            background: linear-gradient(135deg, rgba(47, 180, 146, 0.1) 0%, rgba(118, 153, 212, 0.05) 100%);
+            border: 1px solid rgba(47, 180, 146, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .notification-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .notification-text {
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        @media (max-width: 768px) {
+            .delivery-info {
+                grid-template-columns: 1fr;
+            }
+
+            .tracking-card {
+                padding: var(--spacing-xl);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-xl border-bottom">
+        <div class="container">
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                    <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+                </a>
+                <div>
+                    <h1 style="margin: 0;">Track Your Order</h1>
+                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Real-time updates on your cake delivery</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-3xl">
+        <div class="tracking-container">
+            <!-- Status Notification -->
+            <div class="notification-banner">
+                <div class="notification-icon">🎉</div>
+                <div class="notification-text">
+                    <strong>Cake is being prepared!</strong> Your baker started working on your design this morning. Expected delivery on March 15, 2026.
+                </div>
+            </div>
+
+            <!-- Tracking Card -->
+            <div class="tracking-card">
+                <!-- Header -->
+                <div class="tracking-header">
+                    <div class="order-id">Order #ORD-2026031100001</div>
+                    <div class="order-status">
+                        <span>Status:</span>
+                        <div class="status-badge">
+                            <i class="fas fa-spin"></i>
+                            In Progress
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Info -->
+                <div class="delivery-info">
+                    <div class="info-card">
+                        <div class="info-icon">📅</div>
+                        <div class="info-label">Expected Delivery</div>
+                        <div class="info-value">March 15, 2026</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🚚</div>
+                        <div class="info-label">Estimated Time</div>
+                        <div class="info-value">2 - 4 PM</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">📍</div>
+                        <div class="info-label">Delivery Address</div>
+                        <div class="info-value">123 Main St, Nairobi</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">💵</div>
+                        <div class="info-label">Amount Paid</div>
+                        <div class="info-value">KES 4,300</div>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="tracking-timeline">
+                    <!-- Stage 1: Confirmed -->
+                    <div class="timeline-stage">
+                        <div class="timeline-dot completed">
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Order Confirmed</div>
+                            <div class="timeline-description">Your order payment has been received and the baker was notified</div>
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> March 11, 2026 - 2:30 PM
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 2: Preparing -->
+                    <div class="timeline-stage">
+                        <div class="timeline-dot active">
+                            <i class="fas fa-fire"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Cake Being Prepared</div>
+                            <div class="timeline-description">Your baker has started creating your custom cake design with your selected specifications</div>
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> March 12, 2026 - 10:00 AM (Expected)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 3: Ready -->
+                    <div class="timeline-stage">
+                        <div class="timeline-dot">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Ready for Pickup/Delivery</div>
+                            <div class="timeline-description">Your cake has been completed and is being prepared for shipping</div>
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> March 14, 2026 - 6:00 PM (Expected)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 4: Out for Delivery -->
+                    <div class="timeline-stage">
+                        <div class="timeline-dot">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Out for Delivery</div>
+                            <div class="timeline-description">Your cake is on its way! Driver will contact you soon</div>
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> March 15, 2026 - 8:00 AM (Expected)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stage 5: Delivered -->
+                    <div class="timeline-stage">
+                        <div class="timeline-dot">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <div class="timeline-title">Delivered</div>
+                            <div class="timeline-description">Your cake has been delivered safely</div>
+                            <div class="timeline-time">
+                                <i class="fas fa-clock"></i> March 15, 2026 - 3:00 PM (Expected)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Baker Contact -->
+                <div class="baker-contact">
+                    <div class="contact-title">
+                        <i class="fas fa-user-chef"></i>
+                        Your Baker: Sweet Dreams Bakery
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone</h4>
+                            <p>+254 700 123 456</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email</h4>
+                            <p>hello@sweetdreamsbakery.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Location</h4>
+                            <p>Karen, Nairobi - 2.3 km away</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="contactBaker()">
+                        <i class="fas fa-message"></i> Contact Baker
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareTracking()">
+                        <i class="fas fa-share-alt"></i> Share Tracking
+                    </button>
+                    <button class="btn btn-primary" onclick="window.location.href='../index.html'">
+                        <i class="fas fa-home"></i> Back Home
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-top py-lg text-center text-tertiary" style="margin-top: var(--spacing-3xl);">
+        <p>&copy; 2026 Customatch. Track your cake in real-time.</p>
+    </footer>
+
+    <script>
+        function contactBaker() {
+            alert('Opening chat with baker - Sweet Dreams Bakery\n(This would open a chat interface in production)');
+        }
+
+        function shareTracking() {
+            const url = window.location.href;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'My Customatch Order Tracking',
+                    text: 'Track my custom cake delivery',
+                    url: url
+                });
+            } else {
+                alert('Tracking link copied to clipboard!');
+                navigator.clipboard.writeText(url);
+            }
+        }
+    </script>
+</body>
+</html>

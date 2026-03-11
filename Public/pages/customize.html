@@ -1,0 +1,1819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Customization Studio - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Three.js for 3D Visualization -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- Custom Global Styling System -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .wizard-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-3xl);
+            align-items: start;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-3xl);
+            position: relative;
+            gap: var(--spacing-md);
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(118, 153, 212, 0.2);
+            z-index: -1;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(118, 153, 212, 0.1);
+            border: 2px solid rgba(118, 153, 212, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            font-size: var(--font-size-xs);
+        }
+
+        .step-circle:hover {
+            transform: scale(1.1);
+        }
+
+        .step-circle.active {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            border-color: #7699D4;
+            color: white;
+            box-shadow: 0 0 20px rgba(118, 153, 212, 0.4);
+        }
+
+        .step-circle.completed {
+            background: linear-gradient(135deg, #2FB492 0%, #1FA391 100%);
+            border-color: #2FB492;
+            color: white;
+        }
+
+        .step-content {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .step-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--primary);
+        }
+
+        .step-description {
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.6;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(90px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            background: rgba(118, 153, 212, 0.1);
+            border-color: rgba(118, 153, 212, 0.5);
+            transform: translateY(-4px);
+        }
+
+        .option-card.selected {
+            background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(118, 153, 212, 0.05) 100%);
+            border-color: #7699D4;
+            box-shadow: 0 0 15px rgba(118, 153, 212, 0.3);
+        }
+
+        .option-icon {
+            font-size: 2rem;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .option-label {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+            padding: var(--spacing-lg);
+            background: rgba(118, 153, 212, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-md);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-option:hover {
+            background: rgba(118, 153, 212, 0.1);
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .checkbox-label strong {
+            display: block;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .checkbox-label p {
+            margin: var(--spacing-xs) 0 0 0;
+            color: var(--text-tertiary);
+            font-size: var(--font-size-xs);
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #7699D4;
+            background: rgba(118, 153, 212, 0.1);
+            box-shadow: 0 0 10px rgba(118, 153, 212, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .slider-control {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .slider-label-text {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .slider-value {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #7699D4, #2FB492);
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(118, 153, 212, 0.4);
+            border: 2px solid #7699D4;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(118, 153, 212, 0.4);
+            border: 2px solid #7699D4;
+        }
+
+        .image-upload {
+            border: 2px dashed rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-xl);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(118, 153, 212, 0.02);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .image-upload:hover {
+            border-color: #7699D4;
+            background: rgba(118, 153, 212, 0.05);
+        }
+
+        .image-upload input[type="file"] {
+            display: none;
+        }
+
+        .uploaded-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .image-thumbnail {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 1;
+            background: rgba(118, 153, 212, 0.1);
+        }
+
+        .image-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: var(--spacing-sm);
+            right: var(--spacing-sm);
+            background: rgba(255, 107, 107, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .validation-error {
+            background: rgba(255, 107, 107, 0.1);
+            border-left: 3px solid #FF6B6B;
+            color: #FF6B6B;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            display: none;
+        }
+
+        .validation-error.show {
+            display: block;
+        }
+
+        .validation-notice {
+            background: rgba(255, 193, 7, 0.1);
+            border-left: 3px solid #FFB84D;
+            color: #FFB84D;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            font-size: var(--font-size-sm);
+        }
+
+        .price-breakdown {
+            background: linear-gradient(135deg, rgba(118, 153, 212, 0.1) 0%, rgba(47, 180, 146, 0.05) 100%);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .price-item.total {
+            border-top: 1px solid rgba(118, 153, 212, 0.3);
+            padding-top: var(--spacing-md);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            color: var(--primary);
+        }
+
+        /* Preview Styles */
+        .preview-section {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .preview-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            margin-bottom: var(--spacing-lg);
+            color: var(--primary);
+        }
+
+        .cake-preview {
+            width: 100%;
+            height: 400px;
+            background: radial-gradient(circle at 30% 30%, rgba(118, 153, 212, 0.1), rgba(0, 83, 119, 0.05));
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #canvas3d {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            border-radius: var(--radius-lg);
+        }
+
+        .cake-icon {
+            font-size: 150px;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite;
+            display: none;
+        }
+
+        .cake-icon.fallback {
+            display: block;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        .interaction-hint {
+            position: absolute;
+            bottom: var(--spacing-md);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(118, 153, 212, 0.9);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            text-align: center;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0.7;
+            max-width: 90%;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(10px);
+            }
+            to {
+                opacity: 0.7;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 5;
+        }
+
+        .spinner {
+            border: 4px solid rgba(118, 153, 212, 0.2);
+            border-top: 4px solid #7699D4;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .canvas-info {
+            position: absolute;
+            top: var(--spacing-md);
+            right: var(--spacing-md);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            z-index: 10;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+
+        .canvas-info:hover {
+            opacity: 1;
+        }
+
+        .preview-info {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-md);
+        }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--spacing-md);
+            background: rgba(118, 153, 212, 0.05);
+            border-left: 3px solid #7699D4;
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .preview-item-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .preview-item-value {
+            color: var(--primary);
+            font-weight: 600;
+            word-break: break-word;
+            text-align: right;
+            max-width: 50%;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+            justify-content: space-between;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: var(--spacing-lg);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(118, 153, 212, 0.2);
+            border-color: #7699D4;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn.primary {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            color: white;
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.3);
+        }
+
+        @media (max-width: 1024px) {
+            .wizard-container {
+                grid-template-columns: 1fr;
+                gap: var(--spacing-xl);
+            }
+
+            .preview-section {
+                position: relative;
+                top: 0;
+                height: auto;
+            }
+
+            .cake-preview {
+                height: 250px;
+            }
+
+            .cake-icon {
+                font-size: 80px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .option-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .step-content {
+                padding: var(--spacing-lg);
+            }
+
+            .uploaded-images {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="p-xl border-bottom">
+            <div class="container flex-between">
+                <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                    <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                        <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+                    </a>
+                    <div>
+                        <h1 style="margin: 0;">Interactive Customization Studio</h1>
+                        <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Create your perfect custom cake in 8 detailed steps</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container py-3xl">
+            <div class="wizard-container">
+                <!-- Left Column - Steps -->
+                <div>
+                    <!-- Progress Indicator -->
+                    <div class="progress-steps">
+                        <div style="text-align: center;">
+                            <div class="step-circle active" data-step="1">1</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="2">2</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="3">3</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="4">4</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="5">5</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="6">6</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="7">7</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div class="step-circle" data-step="8">8</div>
+                        </div>
+                    </div>
+
+                    <!-- Step 1: Shape & Size -->
+                    <div class="step-content active" data-step="1">
+                        <h3 class="step-title"><i class="fas fa-shape-square" style="margin-right: var(--spacing-md);"></i>Cake Shape & Size</h3>
+                        <p class="step-description">Select your cake shape and size</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Cake Shape</label>
+                            <div class="option-grid">
+                                <div class="option-card selected" data-value="round" onclick="selectOption(this, 'shape', 'round')">
+                                    <div class="option-icon">⭕</div>
+                                    <div class="option-label">Round</div>
+                                </div>
+                                <div class="option-card" data-value="square" onclick="selectOption(this, 'shape', 'square')">
+                                    <div class="option-icon">⬜</div>
+                                    <div class="option-label">Square</div>
+                                </div>
+                                <div class="option-card" data-value="rectangular" onclick="selectOption(this, 'shape', 'rectangular')">
+                                    <div class="option-icon">▭</div>
+                                    <div class="option-label">Rectangular</div>
+                                </div>
+                                <div class="option-card" data-value="heart" onclick="selectOption(this, 'shape', 'heart')">
+                                    <div class="option-icon">❤️</div>
+                                    <div class="option-label">Heart</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Number of Tiers</label>
+                                <select class="form-input" id="tiers" onchange="updatePreview(); validateSelection();">
+                                    <option value="1">1 Tier</option>
+                                    <option value="2">2 Tiers</option>
+                                    <option value="3">3 Tiers</option>
+                                    <option value="4">4+ Tiers</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Cake Size</label>
+                                <select class="form-input" id="size" onchange="updatePreview(); calculatePrice();">
+                                    <option value="6">6 inches (2-4 people)</option>
+                                    <option value="8" selected>8 inches (6-8 people)</option>
+                                    <option value="10">10 inches (10-15 people)</option>
+                                    <option value="12">12 inches (15-20 people)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: Flavors & Fillings -->
+                    <div class="step-content" data-step="2">
+                        <h3 class="step-title"><i class="fas fa-ice-cream" style="margin-right: var(--spacing-md);"></i>Flavors & Fillings</h3>
+                        <p class="step-description">Select one or more cake flavors and filling options</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Cake Flavors (Select at least 1)</label>
+                            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="vanilla" onchange="updatePreview(); validateSelection();">
+                                    <span class="checkbox-label">
+                                        <strong>🍦 Vanilla</strong>
+                                        <p>Classic and versatile</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="chocolate" onchange="updatePreview(); validateSelection();">
+                                    <span class="checkbox-label">
+                                        <strong>🍫 Chocolate</strong>
+                                        <p>Rich and decadent</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="strawberry" onchange="updatePreview(); validateSelection();">
+                                    <span class="checkbox-label">
+                                        <strong>🍓 Strawberry</strong>
+                                        <p>Fresh and fruity</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="red-velvet" onchange="updatePreview(); validateSelection();">
+                                    <span class="checkbox-label">
+                                        <strong>🎂 Red Velvet</strong>
+                                        <p>Elegant and sophisticated</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="carrot" onchange="updatePreview(); validateSelection();">
+                                    <span class="checkbox-label">
+                                        <strong>🥕 Carrot Cake</strong>
+                                        <p>Moist and spiced</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Cake Fillings</label>
+                            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="chocolate-ganache" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Chocolate Ganache</strong>
+                                        <p>Rich chocolate layer (+ KES 200)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="fruit-filling" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Fresh Fruit Filling</strong>
+                                        <p>Mixed berries (+ KES 300)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="cream-cheese" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Cream Cheese</strong>
+                                        <p>Smooth and tangy (+ KES 250)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="caramel" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Caramel</strong>
+                                        <p>Sweet and buttery (+ KES 200)</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3: Icing -->
+                    <div class="step-content" data-step="3">
+                        <h3 class="step-title"><i class="fas fa-palette" style="margin-right: var(--spacing-md);"></i>Icing Type & Color</h3>
+                        <p class="step-description">Choose icing type and color</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Icing Type</label>
+                            <div class="option-grid" style="grid-template-columns: repeat(2, 1fr);">
+                                <div class="option-card selected" data-value="buttercream" onclick="selectOption(this, 'icingType', 'buttercream'); calculatePrice();">
+                                    <div class="option-icon">🧈</div>
+                                    <div class="option-label">Buttercream</div>
+                                </div>
+                                <div class="option-card" data-value="fondant" onclick="selectOption(this, 'icingType', 'fondant'); calculatePrice();">
+                                    <div class="option-icon">✨</div>
+                                    <div class="option-label">Fondant</div>
+                                </div>
+                                <div class="option-card" data-value="cream-cheese" onclick="selectOption(this, 'icingType', 'cream-cheese'); calculatePrice();">
+                                    <div class="option-icon">🧀</div>
+                                    <div class="option-label">Cream Cheese</div>
+                                </div>
+                                <div class="option-card" data-value="ganache" onclick="selectOption(this, 'icingType', 'ganache'); calculatePrice();">
+                                    <div class="option-icon">🍫</div>
+                                    <div class="option-label">Ganache</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Icing Color</label>
+                            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-md);">
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #F1FAEE; border: 3px solid #7699D4; border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('white'); updatePreview();"></div>
+                                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">White</span>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #E89B9B; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('pink'); updatePreview();"></div>
+                                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Pink</span>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #8B4513; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('brown'); updatePreview();"></div>
+                                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Brown</span>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #7699D4; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('blue'); updatePreview();"></div>
+                                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Blue</span>
+                                </div>
+                                <div style="text-align: center;">
+                                    <div style="width: 50px; height: 50px; background: #2FB492; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('green'); updatePreview();"></div>
+                                    <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Green</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4: Decorations & Theme -->
+                    <div class="step-content" data-step="4">
+                        <h3 class="step-title"><i class="fas fa-sparkles" style="margin-right: var(--spacing-md);"></i>Decorations & Theme</h3>
+                        <p class="step-description">Add decorations and select a theme</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Decoration Styles (Select multiple)</label>
+                            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="flowers" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>🌹 Flowers</strong>
+                                        <p>Fresh or sugar flowers (+ KES 300)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="sprinkles" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>✨ Sprinkles</strong>
+                                        <p>Colorful sugar sprinkles (+ KES 100)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="berries" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>🫐 Fresh Berries</strong>
+                                        <p>Topped with fresh fruit (+ KES 400)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="pearls" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>⚪ Pearl Beads</strong>
+                                        <p>Elegant pearl decoration (+ KES 250)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="candles" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>🕯️ Birthday Candles</strong>
+                                        <p>Candles for cake (+ KES 50)</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Theme</label>
+                            <select class="form-input" id="theme" onchange="calculatePrice(); updatePreview();">
+                                <option value="classic">Classic & Elegant</option>
+                                <option value="modern">Modern & Minimalist</option>
+                                <option value="playful">Playful & Colorful</option>
+                                <option value="luxury">Luxury & Premium</option>
+                                <option value="rustic">Rustic & Natural</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Step 5: Dietary & Special Requirements -->
+                    <div class="step-content" data-step="5">
+                        <h3 class="step-title"><i class="fas fa-leaf" style="margin-right: var(--spacing-md);"></i>Dietary & Special Requirements</h3>
+                        <p class="step-description">Specify any dietary preferences or allergies</p>
+                        
+                        <div class="validation-notice">
+                            ⚠️ Tell us about dietary needs. Providers will confirm availability before accepting your order.
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Dietary Preferences</label>
+                            <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="eggless" onchange="updatePreview();">
+                                    <span class="checkbox-label">
+                                        <strong>Eggless</strong>
+                                        <p>No eggs in the cake</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="vegan" onchange="updatePreview();">
+                                    <span class="checkbox-label">
+                                        <strong>Vegan</strong>
+                                        <p>No animal products</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="sugar-free" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Sugar-Free</strong>
+                                        <p>Uses artificial sweeteners (+ KES 150)</p>
+                                    </span>
+                                </label>
+                                <label class="checkbox-option">
+                                    <input type="checkbox" value="gluten-free" onchange="calculatePrice();">
+                                    <span class="checkbox-label">
+                                        <strong>Gluten-Free</strong>
+                                        <p>Safe for celiac diets (+ KES 200)</p>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Allergen Information</label>
+                            <textarea class="form-input" id="allergens" placeholder="List any allergies (e.g., peanuts, tree nuts, shellfish)" style="min-height: 100px; resize: vertical;"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 6: Quantity & Dates -->
+                    <div class="step-content" data-step="6">
+                        <h3 class="step-title"><i class="fas fa-calendar" style="margin-right: var(--spacing-md);"></i>Quantity & Delivery</h3>
+                        <p class="step-description">Specify quantity and delivery date</p>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Quantity (Number of Cakes)</label>
+                                <div class="slider-control">
+                                    <div class="slider-label">
+                                        <span class="slider-label-text">Quantity</span>
+                                        <span class="slider-value" id="quantityValue">1</span>
+                                    </div>
+                                    <input type="range" id="quantity" min="1" max="10" value="1" onchange="updatePreview(); calculatePrice()">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Delivery Type</label>
+                                <select class="form-input" id="deliveryType" onchange="calculatePrice();">
+                                    <option value="delivery">Delivery (+ KES 200)</option>
+                                    <option value="pickup">Pickup</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Delivery/Pickup Date</label>
+                                <input type="date" class="form-input" id="deliveryDate" onchange="validateDeliveryDate();">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preferred Time</label>
+                                <select class="form-input" id="deliveryTime" onchange="calculatePrice();">
+                                    <option value="morning">Morning (8 AM - 12 PM)</option>
+                                    <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
+                                    <option value="evening">Evening (5 PM - 8 PM) - + KES 100</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 7: Reference Images & Text -->
+                    <div class="step-content" data-step="7">
+                        <h3 class="step-title"><i class="fas fa-image" style="margin-right: var(--spacing-md);"></i>Reference Images & Text</h3>
+                        <p class="step-description">Upload inspiration images and add text</p>
+                        
+                        <div class="form-group">
+                            <label class="form-label">Upload Reference Images (Optional)</label>
+                            <div class="image-upload" onclick="document.getElementById('imageInput').click();">
+                                <div style="font-size: 2rem; margin-bottom: var(--spacing-md);">📸</div>
+                                <div style="font-size: var(--font-size-lg); font-weight: 600; margin-bottom: var(--spacing-sm);">Click to upload images</div>
+                                <p style="color: var(--text-tertiary); font-size: var(--font-size-sm);">or drag and drop (Max 5MB per image)</p>
+                                <input type="file" id="imageInput" accept="image/*" multiple onchange="handleImageUpload(event)">
+                            </div>
+                            <div class="uploaded-images" id="uploadedImages"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Custom Text Inscription</label>
+                            <input type="text" class="form-input" id="inscription" placeholder="e.g., Happy Birthday Sarah!" maxlength="100" onkeyup="updatePreview()">
+                            <div style="color: var(--text-tertiary); font-size: var(--font-size-xs); margin-top: var(--spacing-sm);">
+                                <span id="charCount">0</span>/100 characters
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Additional Notes</label>
+                            <textarea class="form-input" id="notes" placeholder="Share any special requests or ideas (e.g., color preferences, style inspiration)" style="min-height: 100px; resize: vertical;" maxlength="500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Step 8: Review & Confirm -->
+                    <div class="step-content" data-step="8">
+                        <h3 class="step-title"><i class="fas fa-check-circle" style="margin-right: var(--spacing-md);"></i>Review Your Design</h3>
+                        <p class="step-description">Verify all details before proceeding to checkout</p>
+                        
+                        <div class="price-breakdown" id="finalPriceBreakdown">
+                            <!-- Generated by JavaScript -->
+                        </div>
+
+                        <div id="reviewItems" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--spacing-lg); margin-bottom: var(--spacing-xl);">
+                            <!-- Generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="navigation-buttons">
+                        <button class="nav-btn" id="prevBtn" onclick="previousStep()" style="display: none;">
+                            <i class="fas fa-chevron-left" style="margin-right: var(--spacing-md);"></i> Previous
+                        </button>
+                        <button class="nav-btn primary" id="nextBtn" onclick="nextStep()">
+                            Next <i class="fas fa-chevron-right" style="margin-left: var(--spacing-md);"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Column - Preview -->
+                <div class="preview-section">
+                    <h3 class="preview-title">
+                        <i class="fas fa-cube" style="margin-right: var(--spacing-md);"></i>3D Live Preview & Pricing
+                    </h3>
+                    <div class="cake-preview" id="canvasContainer">
+                        <canvas id="canvas3d"></canvas>
+                        <div class="cake-icon fallback">🎂</div>
+                        <div class="loading-spinner" id="loadingSpinner">
+                            <div class="spinner"></div>
+                        </div>
+                        <div class="interaction-hint" id="interactionHint">
+                            🖱️ Drag to rotate • Scroll to zoom • Double-click to reset
+                        </div>
+                        <div class="canvas-info">
+                            <div>3D Visualization</div>
+                            <div style="font-size: var(--font-size-xxs); opacity: 0.8;">Real-time rendering</div>
+                        </div>
+                    </div>
+                    <div class="preview-info" id="previewInfo">
+                        <!-- Generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-top py-lg text-center text-tertiary">
+            <p>&copy; 2026 Customatch. Customize & order your perfect cake.</p>
+        </footer>
+    </div>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // ============================================
+        // 3D VISUALIZATION ENGINE - Component-Based
+        // ============================================
+        class CakeVisualizationEngine {
+            constructor(canvasElement) {
+                this.canvas = canvasElement;
+                this.scene = null;
+                this.camera = null;
+                this.renderer = null;
+                this.cakeGroup = null;
+                this.components = {};
+                
+                // Interaction state
+                this.isDragging = false;
+                this.previousMousePosition = { x: 0, y: 0 };
+                this.rotationSpeed = 0.01;
+                this.zoomDistance = 8;
+                this.minZoom = 3;
+                this.maxZoom = 15;
+
+                // Color palette
+                this.colorMap = {
+                    white: 0xF1FAEE,
+                    pink: 0xE89B9B,
+                    brown: 0x8B4513,
+                    blue: 0x7699D4,
+                    green: 0x2FB492,
+                    gold: 0xFFD700,
+                    purple: 0x9370DB,
+                    black: 0x331E38
+                };
+
+                this.initialize();
+            }
+
+            initialize() {
+                // Scene setup
+                this.scene = new THREE.Scene();
+                this.scene.background = new THREE.Color(0x0a1628);
+                this.scene.fog = new THREE.Fog(0x0a1628, 20, 50);
+
+                // Camera setup
+                const width = this.canvas.clientWidth;
+                const height = this.canvas.clientHeight;
+                this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
+                this.camera.position.z = this.zoomDistance;
+
+                // Renderer setup
+                this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true, alpha: true });
+                this.renderer.setSize(width, height);
+                this.renderer.setPixelRatio(window.devicePixelRatio);
+                this.renderer.shadowMap.enabled = true;
+
+                // Lighting setup
+                this.setupLighting();
+
+                // Create cake group
+                this.cakeGroup = new THREE.Group();
+                this.scene.add(this.cakeGroup);
+
+                // Setup interaction
+                this.setupInteraction();
+
+                // Handle window resize
+                window.addEventListener('resize', () => this.onWindowResize());
+
+                // Start animation loop
+                this.animate();
+
+                // Hide loading spinner
+                document.getElementById('loadingSpinner').style.display = 'none';
+            }
+
+            setupLighting() {
+                // Ambient light
+                const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+                this.scene.add(ambientLight);
+
+                // Directional light (main)
+                const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+                directionalLight.position.set(5, 10, 7);
+                directionalLight.castShadow = true;
+                directionalLight.shadow.mapSize.width = 2048;
+                directionalLight.shadow.mapSize.height = 2048;
+                this.scene.add(directionalLight);
+
+                // Point light (accent)
+                const pointLight = new THREE.PointLight(0x7699D4, 0.5);
+                pointLight.position.set(-5, 5, 5);
+                this.scene.add(pointLight);
+
+                // Ground
+                const groundGeometry = new THREE.CircleGeometry(15, 32);
+                const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x1a2a4a });
+                const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+                ground.rotation.x = -Math.PI / 2;
+                ground.position.y = -4;
+                this.scene.add(ground);
+            }
+
+            setupInteraction() {
+                this.canvas.addEventListener('mousedown', (e) => this.onMouseDown(e));
+                this.canvas.addEventListener('mousemove', (e) => this.onMouseMove(e));
+                this.canvas.addEventListener('mouseup', (e) => this.onMouseUp(e));
+                this.canvas.addEventListener('wheel', (e) => this.onMouseWheel(e));
+                this.canvas.addEventListener('dblclick', (e) => this.resetView(e));
+
+                // Touch support
+                this.canvas.addEventListener('touchstart', (e) => this.onTouchStart(e));
+                this.canvas.addEventListener('touchmove', (e) => this.onTouchMove(e));
+                this.canvas.addEventListener('touchend', (e) => this.onTouchEnd(e));
+            }
+
+            onMouseDown(e) {
+                this.isDragging = true;
+                this.previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+
+            onMouseMove(e) {
+                if (!this.isDragging) return;
+
+                const deltaX = e.clientX - this.previousMousePosition.x;
+                const deltaY = e.clientY - this.previousMousePosition.y;
+
+                this.cakeGroup.rotation.y += deltaX * this.rotationSpeed;
+                this.cakeGroup.rotation.x += deltaY * this.rotationSpeed;
+
+                this.previousMousePosition = { x: e.clientX, y: e.clientY };
+            }
+
+            onMouseUp(e) {
+                this.isDragging = false;
+            }
+
+            onMouseWheel(e) {
+                e.preventDefault();
+                
+                const direction = e.deltaY > 0 ? 1 : -1;
+                this.zoomDistance += direction * 0.5;
+                this.zoomDistance = Math.max(this.minZoom, Math.min(this.maxZoom, this.zoomDistance));
+                
+                this.camera.position.z = this.zoomDistance;
+            }
+
+            resetView(e) {
+                e.preventDefault();
+                this.cakeGroup.rotation.set(0.2, 0, 0);
+                this.zoomDistance = 8;
+                this.camera.position.z = this.zoomDistance;
+            }
+
+            onTouchStart(e) {
+                if (e.touches.length === 1) {
+                    this.isDragging = true;
+                    this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                }
+            }
+
+            onTouchMove(e) {
+                if (!this.isDragging || e.touches.length !== 1) return;
+                
+                const deltaX = e.touches[0].clientX - this.previousMousePosition.x;
+                const deltaY = e.touches[0].clientY - this.previousMousePosition.y;
+
+                this.cakeGroup.rotation.y += deltaX * this.rotationSpeed;
+                this.cakeGroup.rotation.x += deltaY * this.rotationSpeed;
+
+                this.previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+
+            onTouchEnd(e) {
+                this.isDragging = false;
+            }
+
+            onWindowResize() {
+                const width = this.canvas.clientWidth;
+                const height = this.canvas.clientHeight;
+                this.camera.aspect = width / height;
+                this.camera.updateProjectionMatrix();
+                this.renderer.setSize(width, height);
+            }
+
+            createCakeTier(radius, height, color) {
+                const group = new THREE.Group();
+
+                // Cake body (cylinder)
+                const cakeGeometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+                const cakeMaterial = new THREE.MeshStandardMaterial({
+                    color: color,
+                    metalness: 0.2,
+                    roughness: 0.7
+                });
+                const cakeMesh = new THREE.Mesh(cakeGeometry, cakeMaterial);
+                cakeMesh.castShadow = true;
+                cakeMesh.receiveShadow = true;
+                group.add(cakeMesh);
+
+                // Icing top
+                const icingGeometry = new THREE.CylinderGeometry(radius + 0.05, radius + 0.05, 0.1, 32);
+                const icingMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xF1FAEE,
+                    metalness: 0.3,
+                    roughness: 0.6
+                });
+                const icingMesh = new THREE.Mesh(icingGeometry, icingMaterial);
+                icingMesh.position.y = height / 2 + 0.05;
+                icingMesh.castShadow = true;
+                icingMesh.receiveShadow = true;
+                group.add(icingMesh);
+
+                return group;
+            }
+
+            addDecoration(tier, type, color = 0xff69b4) {
+                if (type === 'sprinkles') {
+                    for (let i = 0; i < 20; i++) {
+                        const sprinkleGeometry = new THREE.BoxGeometry(0.1, 0.02, 0.02);
+                        const sprinkleMaterial = new THREE.MeshStandardMaterial({ color: color });
+                        const sprinkle = new THREE.Mesh(sprinkleGeometry, sprinkleMaterial);
+                        
+                        sprinkle.position.x = (Math.random() - 0.5) * 3;
+                        sprinkle.position.z = (Math.random() - 0.5) * 3;
+                        sprinkle.position.y = 0.3;
+                        sprinkle.rotation.z = Math.random() * Math.PI;
+                        
+                        tier.add(sprinkle);
+                    }
+                } else if (type === 'berries') {
+                    for (let i = 0; i < 12; i++) {
+                        const berryGeometry = new THREE.SphereGeometry(0.1, 16, 16);
+                        const berryMaterial = new THREE.MeshStandardMaterial({ color: 0xFF6B6B });
+                        const berry = new THREE.Mesh(berryGeometry, berryMaterial);
+                        
+                        const angle = (i / 12) * Math.PI * 2;
+                        berry.position.x = Math.cos(angle) * 1.2;
+                        berry.position.z = Math.sin(angle) * 1.2;
+                        berry.position.y = 0.2;
+                        
+                        tier.add(berry);
+                    }
+                } else if (type === 'flowers') {
+                    for (let i = 0; i < 3; i++) {
+                        this.addFlower(tier, i);
+                    }
+                } else if (type === 'pearls') {
+                    for (let i = 0; i < 8; i++) {
+                        const pearlGeometry = new THREE.SphereGeometry(0.08, 16, 16);
+                        const pearlMaterial = new THREE.MeshStandardMaterial({ 
+                            color: 0xFFFFFF,
+                            metalness: 0.8,
+                            roughness: 0.2
+                        });
+                        const pearl = new THREE.Mesh(pearlGeometry, pearlMaterial);
+                        
+                        const angle = (i / 8) * Math.PI * 2;
+                        pearl.position.x = Math.cos(angle) * 1.3;
+                        pearl.position.z = Math.sin(angle) * 1.3;
+                        pearl.position.y = 0.25;
+                        
+                        tier.add(pearl);
+                    }
+                }
+            }
+
+            addFlower(tier, index) {
+                const petalGeometry = new THREE.SphereGeometry(0.12, 12, 12);
+                const petalMaterial = new THREE.MeshStandardMaterial({ color: 0xFF69B4 });
+                
+                const angle = (index / 3) * Math.PI * 2;
+                const flowerGroup = new THREE.Group();
+                
+                for (let i = 0; i < 5; i++) {
+                    const petal = new THREE.Mesh(petalGeometry, petalMaterial);
+                    petal.position.x = Math.cos((i / 5) * Math.PI * 2) * 0.3;
+                    petal.position.z = Math.sin((i / 5) * Math.PI * 2) * 0.3;
+                    flowerGroup.add(petal);
+                }
+                
+                flowerGroup.position.x = Math.cos(angle) * 1.0;
+                flowerGroup.position.z = Math.sin(angle) * 1.0;
+                flowerGroup.position.y = 0.3;
+                tier.add(flowerGroup);
+            }
+
+            renderCake(designData) {
+                // Clear previous cake
+                while (this.cakeGroup.children.length > 0) {
+                    this.cakeGroup.removeChild(this.cakeGroup.children[0]);
+                }
+
+                const { shape, size, tiers, icingColor, decorations, theme } = designData;
+
+                // Calculate tier dimensions based on size
+                const baseRadius = size === '6' ? 0.6 : size === '8' ? 0.8 : size === '10' ? 1.0 : 1.2;
+                const tierHeight = 0.6;
+                const icingColorValue = this.colorMap[icingColor] || this.colorMap.white;
+
+                // Add tiers
+                const tierCount = parseInt(tiers) || 1;
+                let currentY = 0;
+
+                for (let i = 0; i < tierCount; i++) {
+                    const tierRadius = baseRadius * (1 - i * 0.15);
+                    const tier = this.createCakeTier(tierRadius, tierHeight, icingColorValue);
+                    tier.position.y = currentY;
+                    
+                    // Add decorations
+                    if (decorations.includes('sprinkles')) {
+                        this.addDecoration(tier, 'sprinkles', 0xFFD700);
+                    }
+                    if (decorations.includes('berries')) {
+                        this.addDecoration(tier, 'berries');
+                    }
+                    if (decorations.includes('flowers')) {
+                        this.addDecoration(tier, 'flowers');
+                    }
+                    if (decorations.includes('pearls')) {
+                        this.addDecoration(tier, 'pearls');
+                    }
+
+                    this.cakeGroup.add(tier);
+                    currentY += tierHeight + 0.1;
+                }
+
+                // Add candles if selected
+                if (decorations.includes('candles')) {
+                    this.addCandles(tierCount);
+                }
+
+                // Set initial rotation for better viewing angle
+                this.cakeGroup.rotation.x = 0.2;
+            }
+
+            addCandles(tierCount) {
+                const candleCount = 3 + tierCount;
+                const topTierY = (tierCount - 1) * (0.6 + 0.1) + 0.5;
+
+                for (let i = 0; i < candleCount; i++) {
+                    const angle = (i / candleCount) * Math.PI * 2;
+                    const radius = 0.4;
+
+                    // Candle stick
+                    const candleGeometry = new THREE.CylinderGeometry(0.03, 0.03, 0.4, 16);
+                    const candleMaterial = new THREE.MeshStandardMaterial({ color: 0xFFD700 });
+                    const candle = new THREE.Mesh(candleGeometry, candleMaterial);
+                    
+                    candle.position.x = Math.cos(angle) * radius;
+                    candle.position.z = Math.sin(angle) * radius;
+                    candle.position.y = topTierY + 0.3;
+
+                    // Flame (simplified as cone)
+                    const flameGeometry = new THREE.ConeGeometry(0.04, 0.15, 8);
+                    const flameMaterial = new THREE.MeshBasicMaterial({ color: 0xFF6B00 });
+                    const flame = new THREE.Mesh(flameGeometry, flameMaterial);
+                    flame.position.y = 0.25;
+
+                    candle.add(flame);
+                    this.cakeGroup.add(candle);
+                }
+            }
+
+            animate() {
+                requestAnimationFrame(() => this.animate());
+                
+                // Gentle auto-rotation
+                if (!this.isDragging) {
+                    this.cakeGroup.rotation.y += 0.002;
+                }
+
+                this.renderer.render(this.scene, this.camera);
+            }
+
+            update(designData) {
+                this.renderCake(designData);
+            }
+        }
+
+        // ============================================
+        // MAIN CUSTOMIZATION LOGIC
+        // ============================================
+        let currentStep = 1;
+        const totalSteps = 8;
+        let visualizationEngine = null;
+
+        // Design data
+        const designData = {
+            shape: 'round',
+            size: '8',
+            tiers: '1',
+            flavors: [],
+            fillings: [],
+            icingType: 'buttercream',
+            icingColor: 'white',
+            decorations: [],
+            theme: 'classic',
+            dietary: [],
+            allergens: '',
+            quantity: 1,
+            deliveryType: 'delivery',
+            deliveryDate: '',
+            deliveryTime: 'morning',
+            inscription: '',
+            notes: '',
+            images: [],
+            totalPrice: 4000
+        };
+
+        // Display names
+        const displayNames = {
+            shapes: { round: 'Round', square: 'Square', rectangular: 'Rectangular', heart: 'Heart' },
+            sizes: { '6': '6"', '8': '8"', '10': '10"', '12': '12"' },
+            icingTypes: { buttercream: 'Buttercream', fondant: 'Fondant', 'cream-cheese': 'Cream Cheese', ganache: 'Ganache' },
+            themes: { classic: 'Classic & Elegant', modern: 'Modern & Minimalist', playful: 'Playful & Colorful', luxury: 'Luxury & Premium', rustic: 'Rustic & Natural' }
+        };
+
+        // Base prices
+        const basePrices = {
+            size: { '6': 3500, '8': 4000, '10': 5000, '12': 6500 },
+            icingType: { buttercream: 0, fondant: 500, 'cream-cheese': 300, ganache: 400 },
+            theme: { classic: 0, modern: 200, playful: 300, luxury: 1000, rustic: 150 },
+            fillings: { 'chocolate-ganache': 200, 'fruit-filling': 300, 'cream-cheese': 250, 'caramel': 200 },
+            decorations: { flowers: 300, sprinkles: 100, berries: 400, pearls: 250, candles: 50 },
+            dietary: { 'sugar-free': 150, 'gluten-free': 200 },
+            deliveryType: { delivery: 200, pickup: 0 },
+            deliveryTime: { morning: 0, afternoon: 0, evening: 100 }
+        };
+
+        function selectOption(element, category, value) {
+            const siblings = element.parentElement.querySelectorAll('.option-card');
+            siblings.forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            designData[category] = value;
+            updatePreview();
+            calculatePrice();
+        }
+
+        function selectColor(color) {
+            designData.icingColor = color;
+            updatePreview();
+        }
+
+        function handleImageUpload(e) {
+            const files = Array.from(e.target.files);
+            if (designData.images.length + files.length > 5) {
+                alert('Maximum 5 images allowed');
+                return;
+            }
+
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    designData.images.push(event.target.result);
+                    renderUploadedImages();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function renderUploadedImages() {
+            const container = document.getElementById('uploadedImages');
+            container.innerHTML = designData.images.map((img, idx) => `
+                <div class="image-thumbnail">
+                    <img src="${img}" alt="Reference ${idx + 1}">
+                    <button class="remove-image-btn" onclick="removeImage(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function removeImage(idx) {
+            designData.images.splice(idx, 1);
+            renderUploadedImages();
+        }
+
+        function updatePreview() {
+            const previewInfo = document.getElementById('previewInfo');
+            
+            // Get selected flavors
+            const flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value)
+                .map(f => f.charAt(0).toUpperCase() + f.slice(1))
+                .join(', ') || 'Not selected';
+
+            // Get selected decorations
+            const decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value)
+                .map(d => d.charAt(0).toUpperCase() + d.slice(1))
+                .join(', ') || 'None';
+
+            // Get quantity value
+            const quantity = document.getElementById('quantity').value;
+            document.getElementById('quantityValue').textContent = quantity;
+
+            const inscription = document.getElementById('inscription').value;
+            document.getElementById('charCount').textContent = inscription.length;
+
+            previewInfo.innerHTML = `
+                <div class="preview-item">
+                    <span class="preview-item-label">Shape:</span>
+                    <span class="preview-item-value">${displayNames.shapes[designData.shape]}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Size:</span>
+                    <span class="preview-item-value">${displayNames.sizes[designData.size]}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Tiers: </span>
+                    <span class="preview-item-value">${document.getElementById('tiers').value}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Flavors:</span>
+                    <span class="preview-item-value">${flavors}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Icing:</span>
+                    <span class="preview-item-value">${displayNames.icingTypes[designData.icingType]}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Decorations:</span>
+                    <span class="preview-item-value">${decorations}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Quantity:</span>
+                    <span class="preview-item-value">${quantity}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Inscription:</span>
+                    <span class="preview-item-value">${inscription || '(None)'}</span>
+                </div>
+                <div class="preview-item">
+                    <span class="preview-item-label">Images:</span>
+                    <span class="preview-item-value">${designData.images.length} uploaded</span>
+                </div>
+                <div class="preview-item" style="margin-top: var(--spacing-lg); background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(47, 180, 146, 0.2) 100%);">
+                    <span class="preview-item-label">Estimated Total:</span>
+                    <span class="preview-item-value" style="font-size: var(--font-size-lg);">KES <span id="totalPrice">4,000</span></span>
+                </div>
+            `;
+
+            // Update 3D visualization
+            if (visualizationEngine) {
+                visualizationEngine.update(designData);
+            }
+        }
+
+        function calculatePrice() {
+            let total = 0;
+
+            // Base price by size
+            total += basePrices.size[designData.size] || 0;
+
+            // Icing type
+            total += basePrices.icingType[designData.icingType] || 0;
+
+            // Theme
+            total += basePrices.theme[document.getElementById('theme').value] || 0;
+
+            // Fillings
+            document.querySelectorAll('input[value="chocolate-ganache"], input[value="fruit-filling"], input[value="cream-cheese"], input[value="caramel"]')
+                .forEach(cb => { if (cb.checked) total += basePrices.fillings[cb.value] || 0; });
+
+            // Decorations
+            document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]')
+                .forEach(cb => { if (cb.checked) total += basePrices.decorations[cb.value] || 0; });
+
+            // Dietary
+            document.querySelectorAll('input[value="sugar-free"], input[value="gluten-free"]')
+                .forEach(cb => { if (cb.checked) total += basePrices.dietary[cb.value] || 0; });
+
+            // Quantity
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+            total *= quantity;
+
+            // Delivery
+            total += basePrices.deliveryType[document.getElementById('deliveryType').value] || 0;
+
+            // Delivery time
+            total += basePrices.deliveryTime[document.getElementById('deliveryTime').value] || 0;
+
+            document.getElementById('totalPrice').textContent = total.toLocaleString();
+            designData.totalPrice = total;
+        }
+
+        function validateDeliveryDate() {
+            const date = new Date(document.getElementById('deliveryDate').value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (date < today) {
+                alert('Delivery date must be in the future');
+                document.getElementById('deliveryDate').value = '';
+            }
+        }
+
+        function validateSelection() {
+            const errorDiv = document.querySelector('.validation-error') || document.createElement('div');
+            const flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                .filter(cb => cb.checked).length;
+
+            if (flavors === 0 && currentStep >= 2) {
+                if (!errorDiv.parentElement) {
+                    const content = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+                    content.insertBefore(errorDiv, content.firstChild);
+                    errorDiv.className = 'validation-error';
+                }
+                errorDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please select at least one flavor';
+                errorDiv.classList.add('show');
+                return false;
+            }
+
+            if (errorDiv.parentElement) {
+                errorDiv.classList.remove('show');
+            }
+            return true;
+        }
+
+        function nextStep() {
+            if (!validateSelection()) return;
+
+            if (currentStep < totalSteps) {
+                goToStep(currentStep + 1);
+            } else if (currentStep === totalSteps) {
+                // Collect all form data
+                designData.tiers = document.getElementById('tiers').value;
+                designData.size = document.getElementById('size').value;
+                designData.icingType = document.getElementById('icingType')?.value || designData.icingType;
+                designData.theme = document.getElementById('theme').value;
+                designData.quantity = document.getElementById('quantity').value;
+                designData.deliveryType = document.getElementById('deliveryType').value;
+                designData.deliveryDate = document.getElementById('deliveryDate').value;
+                designData.deliveryTime = document.getElementById('deliveryTime').value;
+                designData.allergens = document.getElementById('allergens').value;
+                designData.inscription = document.getElementById('inscription').value;
+                designData.notes = document.getElementById('notes').value;
+                designData.dietary = Array.from(document.querySelectorAll('input[value="eggless"], input[value="vegan"], input[value="sugar-free"], input[value="gluten-free"]'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                designData.flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                designData.fillings = Array.from(document.querySelectorAll('input[value="chocolate-ganache"], input[value="fruit-filling"], input[value="cream-cheese"], input[value="caramel"]'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                designData.decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+
+                console.log('Design submitted:', designData);
+                sessionStorage.setItem('designData', JSON.stringify(designData));
+                window.location.href = 'providers.html';
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                goToStep(currentStep - 1);
+            }
+        }
+
+        function goToStep(step) {
+            // Hide current step
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
+
+            // Mark as completed
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('completed');
+
+            // Show new step
+            currentStep = step;
+            document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.add('active');
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('completed');
+            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
+
+            // Update buttons
+            document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
+            document.getElementById('nextBtn').textContent = currentStep === totalSteps ? '✓ Complete Design' : 'Next';
+            if (currentStep === totalSteps) {
+                document.getElementById('nextBtn').innerHTML = '<i class="fas fa-check" style="margin-right: var(--spacing-md);"></i> Complete Design';
+            } else {
+                document.getElementById('nextBtn').innerHTML = 'Next <i class="fas fa-chevron-right" style="margin-left: var(--spacing-md);"></i>';
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize 3D visualization engine
+            const canvas = document.getElementById('canvas3d');
+            if (canvas) {
+                try {
+                    visualizationEngine = new CakeVisualizationEngine(canvas);
+                    visualizationEngine.update(designData);
+                } catch (error) {
+                    console.error('Failed to initialize 3D visualization:', error);
+                    // Fallback: show emoji cake
+                    document.querySelector('.cake-icon').classList.add('fallback');
+                }
+            } else {
+                console.error('Canvas element not found');
+            }
+
+            updatePreview();
+            calculatePrice();
+            
+            // Set minimum delivery date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
+
+            // Add click handlers to step circles
+            document.querySelectorAll('.step-circle').forEach(circle => {
+                circle.addEventListener('click', function() {
+                    const step = parseInt(this.dataset.step);
+                    if (step <= currentStep) {
+                        goToStep(step);
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

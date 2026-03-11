@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customatch - Interactive 3D App</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Custom Global Styling System -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="p-xl border-bottom">
+            <div class="container flex-between">
+                <div>
+                    <h1>Customatch</h1>
+                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">Interactive 3D Application</p>
+                </div>
+                <div class="flex gap-md">
+                    <button class="btn btn-primary" onclick="document.getElementById('componentModal').classList.add('active')">
+                        <i class="fas fa-cube"></i> Components
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container">
+            <!-- Three.js Canvas Section -->
+            <section class="mt-xl mb-xl">
+                <h2 class="mb-lg">3D Visualization</h2>
+                <div id="canvas-container" class="rounded shadow-lg"></div>
+            </section>
+
+            <!-- UI Components Showcase -->
+            <section class="mt-xl mb-xl">
+                <h2 class="mb-lg">UI Components Library</h2>
+                
+                <!-- Buttons Grid -->
+                <div class="grid-3 gap-lg mb-xl">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Button Variants</h5>
+                        </div>
+                        <div class="card-body gap-sm" style="display: flex; flex-direction: column;">
+                            <button class="btn btn-primary">Primary Button</button>
+                            <button class="btn btn-secondary">Secondary Button</button>
+                            <button class="btn btn-danger">Danger Button</button>
+                            <button class="btn btn-success">Success Button</button>
+                        </div>
+                    </div>
+
+                    <!-- Badges Grid -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Badges</h5>
+                        </div>
+                        <div class="card-body" style="display: flex; flex-wrap: wrap; gap: var(--spacing-md);">
+                            <span class="badge">Primary</span>
+                            <span class="badge badge-secondary">Secondary</span>
+                            <span class="badge badge-success">Success</span>
+                            <span class="badge badge-warning">Warning</span>
+                            <span class="badge badge-danger">Danger</span>
+                            <span class="badge badge-outline">Outline</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Bars -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Progress Bars</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 75%"></div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-danger" style="width: 50%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alerts Grid -->
+                <div class="mb-xl">
+                    <h4 class="mb-lg">Alerts</h4>
+                    <div class="alert alert-primary">
+                        <i class="fas fa-info-circle"></i>
+                        <div>This is a primary alert with important information.</div>
+                    </div>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <div>Success! Your action was completed successfully.</div>
+                    </div>
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>Warning: Please review this information carefully.</div>
+                    </div>
+                    <div class="alert alert-danger">
+                        <i class="fas fa-times-circle"></i>
+                        <div>Error: Something went wrong. Please try again.</div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="mb-xl">
+                    <h4 class="mb-lg">Tabs Component</h4>
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchTab(this, 0)"><i class="fas fa-home"></i> Overview</div>
+                        <div class="tab" onclick="switchTab(this, 1)"><i class="fas fa-chart-bar"></i> Statistics</div>
+                        <div class="tab" onclick="switchTab(this, 2)"><i class="fas fa-cog"></i> Settings</div>
+                    </div>
+                    <div class="tab-content active">
+                        <p>This is the overview tab content. Use the component system for consistent styling.</p>
+                    </div>
+                    <div class="tab-content">
+                        <p>Statistics and analytics data will appear here.</p>
+                    </div>
+                    <div class="tab-content">
+                        <p>Application settings and configuration options.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chart Section -->
+            <section class="mt-xl mb-xl">
+                <h2 class="mb-lg">Data Visualization</h2>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Chart.js Integration</h5>
+                    </div>
+                    <div id="chart-container" class="card-body">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Elements -->
+            <section class="mt-xl mb-xl">
+                <h2 class="mb-lg">Interactive Elements</h2>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Interact.js - Draggable & Resizable Box</h5>
+                        <p class="text-tertiary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-sm);">Try dragging and resizing the box below:</p>
+                    </div>
+                    <div class="card-body" style="min-height: 300px; position: relative; background: var(--bg-primary); border-radius: var(--radius-lg);">
+                        <div id="interactive-box" style="width: 200px; height: 150px; background: #7699D4; cursor: grab;"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Grid System Demo -->
+            <section class="mt-xl mb-xl">
+                <h2 class="mb-lg">Responsive Grid System</h2>
+                <div class="grid-4 gap-lg">
+                    <div class="card text-center animate-fade-in">
+                        <i class="fas fa-cube" style="font-size: 2rem; color: var(--primary); margin-bottom: var(--spacing-md);"></i>
+                        <h5>Responsive</h5>
+                        <p class="text-tertiary">Adapts to all screen sizes</p>
+                    </div>
+                    <div class="card text-center animate-fade-in delay-100">
+                        <i class="fas fa-palette" style="font-size: 2rem; color: var(--secondary); margin-bottom: var(--spacing-md);"></i>
+                        <h5>Themeable</h5>
+                        <p class="text-tertiary">Customizable color system</p>
+                    </div>
+                    <div class="card text-center animate-fade-in delay-200">
+                        <i class="fas fa-bolt" style="font-size: 2rem; color: var(--warning); margin-bottom: var(--spacing-md);"></i>
+                        <h5>Performance</h5>
+                        <p class="text-tertiary">Optimized and lightweight</p>
+                    </div>
+                    <div class="card text-center animate-fade-in delay-300">
+                        <i class="fas fa-code" style="font-size: 2rem; color: var(--info); margin-bottom: var(--spacing-md);"></i>
+                        <h5>Developer</h5>
+                        <p class="text-tertiary">Easy to use utilities</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Animation Demo -->
+            <section class="mt-xl mb-3xl">
+                <h2 class="mb-lg">Animation Library</h2>
+                <div class="flex gap-lg flex-wrap">
+                    <div class="card animate-bounce" style="flex: 1; min-width: 150px; text-center;">
+                        <i class="fas fa-circle" style="font-size: 2rem; color: var(--primary);"></i>
+                        <p class="mt-md">Bounce</p>
+                    </div>
+                    <div class="card animate-pulse" style="flex: 1; min-width: 150px; text-center;">
+                        <i class="fas fa-circle" style="font-size: 2rem; color: var(--secondary);"></i>
+                        <p class="mt-md">Pulse</p>
+                    </div>
+                    <div class="card animate-spin" style="flex: 1; min-width: 150px; text-center;">
+                        <i class="fas fa-circle" style="font-size: 2rem; color: var(--info);"></i>
+                        <p class="mt-md">Spin</p>
+                    </div>
+                    <div class="card animate-glow" style="flex: 1; min-width: 150px; text-center;">
+                        <i class="fas fa-circle" style="font-size: 2rem; color: var(--success);"></i>
+                        <p class="mt-md">Glow</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="border-top py-lg text-center text-tertiary">
+            <p>&copy; 2026 Customatch. Built with Three.js, GSAP, Chart.js, Interact.js, and more.</p>
+        </footer>
+    </div>
+
+    <!-- Component Modal -->
+    <div id="componentModal" class="modal">
+        <div class="modal-content">
+            <div class="flex-between mb-lg">
+                <h3>UI Components</h3>
+                <span class="modal-close" onclick="document.getElementById('componentModal').classList.remove('active')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p class="mb-lg"><strong>Global Styling System includes:</strong></p>
+                <ul style="padding-left: var(--spacing-xl);">
+                    <li><strong>Design System:</strong> 40+ CSS variables for colors, spacing, typography</li>
+                    <li><strong>Grid System:</strong> 12-column responsive grid with breakpoints</li>
+                    <li><strong>Components:</strong> Buttons, Cards, Badges, Alerts, Progress, Tabs, Modals</li>
+                    <li><strong>Animations:</strong> 10+ keyframe animations with utility classes</li>
+                    <li><strong>Responsive:</strong> Mobile-first breakpoints (xs, sm, md, lg, xl, 2k)</li>
+                    <li><strong>Utilities:</strong> Text, colors, spacing, display, overflow, and more</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- Interact.js -->
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    
+    <!-- Application Script -->
+    <script src="../script.js"></script>
+</body>
+</html>

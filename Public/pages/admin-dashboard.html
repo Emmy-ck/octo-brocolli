@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Styling -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        body {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(118, 153, 212, 0.2);
+            padding: var(--spacing-xl);
+            height: 100vh;
+            overflow-y: auto;
+            position: sticky;
+            top: 0;
+        }
+
+        .sidebar-logo {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--spacing-3xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .sidebar-section {
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .sidebar-section-title {
+            color: var(--text-tertiary);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: var(--spacing-md);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+        }
+
+        .main-content {
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            background: var(--bg-primary);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .header-title h1 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .header-title p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-change {
+            font-size: var(--font-size-sm);
+            color: #2FB492;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
+        .section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .section-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-lg);
+        }
+
+        .alert-item {
+            background: rgba(255, 152, 0, 0.05);
+            border-left: 3px solid #FFB84D;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .alert-content h4 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .alert-content p {
+            margin: var(--spacing-xs) 0 0 0;
+            color: var(--text-secondary);
+            font-size: var(--font-size-xs);
+        }
+
+        .alert-action {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .action-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            background: rgba(118, 153, 212, 0.05);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(118, 153, 212, 0.15);
+        }
+
+        .action-btn.danger {
+            color: #FF6B6B;
+            border-color: rgba(255, 107, 107, 0.3);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .action-btn.danger:hover {
+            background: rgba(255, 107, 107, 0.15);
+        }
+
+        .providers-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .providers-table th {
+            text-align: left;
+            padding: var(--spacing-lg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+            border-bottom: 2px solid rgba(118, 153, 212, 0.2);
+        }
+
+        .providers-table td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(118, 153, 212, 0.1);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .provider-name {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(47, 180, 146, 0.1);
+            color: #2FB492;
+        }
+
+        .status-inactive {
+            background: rgba(255, 107, 107, 0.1);
+            color: #FF6B6B;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #FFB84D;
+        }
+
+        .tabs {
+            display: flex;
+            gap: var(--spacing-lg);
+            border-bottom: 1px solid rgba(118, 153, 212, 0.2);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .tab {
+            padding: var(--spacing-lg) 0;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover,
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: var(--spacing-xl);
+        }
+
+        @media (max-width: 1024px) {
+            body {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .providers-table {
+                font-size: 0.75rem;
+            }
+
+            .providers-table th,
+            .providers-table td {
+                padding: var(--spacing-md);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-shield-alt"></i> Admin
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Dashboard</div>
+            <div class="nav-item active" onclick="navigateTo('overview')">
+                <i class="fas fa-chart-pie"></i> Overview
+            </div>
+            <div class="nav-item" onclick="navigateTo('monitoring')">
+                <i class="fas fa-eye"></i> Monitoring
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Management</div>
+            <div class="nav-item" onclick="navigateTo('providers')">
+                <i class="fas fa-users-cog"></i> Providers
+            </div>
+            <div class="nav-item" onclick="navigateTo('users')">
+                <i class="fas fa-users"></i> Users
+            </div>
+            <div class="nav-item" onclick="navigateTo('orders')">
+                <i class="fas fa-shopping-cart"></i> Orders
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Moderation</div>
+            <div class="nav-item" onclick="navigateTo('disputes')">
+                <i class="fas fa-exclamation-triangle"></i> Disputes
+            </div>
+            <div class="nav-item" onclick="navigateTo('reviews')">
+                <i class="fas fa-flag"></i> Reported Reviews
+            </div>
+            <div class="nav-item" onclick="navigateTo('content')">
+                <i class="fas fa-images"></i> Content Moderation
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">System</div>
+            <div class="nav-item" onclick="navigateTo('analytics')">
+                <i class="fas fa-bar-chart"></i> Analytics
+            </div>
+            <div class="nav-item" onclick="navigateTo('settings')">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+            <div class="nav-item" onclick="window.location.href='../index.html'">
+                <i class="fas fa-sign-out-alt"></i> Exit
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>Admin Dashboard</h1>
+                <p>System monitoring & management</p>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value">5,234</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up"></i> 45% this month</div>
+                </div>
+                <div class="stat-icon">👥</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Active Providers</div>
+                    <div class="stat-value">342</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up"></i> 8 new this week</div>
+                </div>
+                <div class="stat-icon">👨‍🍳</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value">18,493</div>
+                    <div class="stat-change"><i class="fas fa-arrow-up"></i> KES 647M revenue</div>
+                </div>
+                <div class="stat-icon">📦</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Platform Health</div>
+                    <div class="stat-value">99.8%</div>
+                    <div class="stat-change"><i class="fas fa-check"></i> All systems operational</div>
+                </div>
+                <div class="stat-icon">⚙️</div>
+            </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-3xl);">
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-chart-line"></i> Revenue Trend
+                </div>
+                <div class="chart-container">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">
+                    <i class="fas fa-chart-bar"></i> Order Volume
+                </div>
+                <div class="chart-container">
+                    <canvas id="volumeChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Alerts & Issues -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-bell"></i> System Alerts
+            </div>
+            <div class="alerts-list">
+                <div class="alert-item">
+                    <div class="alert-content">
+                        <h4>⚠️ Dispute Report: Order #ORD-2026031100042</h4>
+                        <p>Customer reported incorrect cake design. Baker response pending.</p>
+                    </div>
+                    <div class="alert-action">
+                        <button class="action-btn" onclick="reviewDispute()">Review</button>
+                        <button class="action-btn" onclick="dismissAlert()">Dismiss</button>
+                    </div>
+                </div>
+
+                <div class="alert-item">
+                    <div class="alert-content">
+                        <h4>🚩 Flagged Review: Baker ID 127</h4>
+                        <p>User reported inappropriate language in review.</p>
+                    </div>
+                    <div class="alert-action">
+                        <button class="action-btn" onclick="reviewContent()">Review</button>
+                        <button class="action-btn danger" onclick="removeReview()">Remove</button>
+                    </div>
+                </div>
+
+                <div class="alert-item">
+                    <div class="alert-content">
+                        <h4>📊 Provider Verification Pending: 5 applications</h4>
+                        <p>New bakers awaiting KYC verification and approval.</p>
+                    </div>
+                    <div class="alert-action">
+                        <button class="action-btn" onclick="reviewApplications()">Review</button>
+                    </div>
+                </div>
+
+                <div class="alert-item">
+                    <div class="alert-content">
+                        <h4>🔻 Low Inventory Alert: Baker 89</h4>
+                        <p>Provider flagged low flour stock - may affect order fulfillment.</p>
+                    </div>
+                    <div class="alert-action">
+                        <button class="action-btn" onclick="contactProvider()">Contact</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Providers -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fas fa-users-cog"></i> Active Providers
+            </div>
+            <div class="tabs">
+                <div class="tab active" onclick="switchProviderTab('verified')">Verified</div>
+                <div class="tab" onclick="switchProviderTab('pending')">Pending</div>
+                <div class="tab" onclick="switchProviderTab('suspended')">Suspended</div>
+            </div>
+            <table class="providers-table">
+                <thead>
+                    <tr>
+                        <th>Provider Name</th>
+                        <th>Location</th>
+                        <th>Orders</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="provider-name">Sweet Dreams Bakery</td>
+                        <td>Nairobi, Karen</td>
+                        <td>1,200</td>
+                        <td>4.85 ⭐</td>
+                        <td><span class="status-badge status-active"><i class="fas fa-check-circle"></i> Active</span></td>
+                        <td>
+                            <button class="action-btn" onclick="viewProvider('provider1')">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="provider-name">Artisan Cake Studio</td>
+                        <td>Nairobi, Westlands</td>
+                        <td>890</td>
+                        <td>4.72 ⭐</td>
+                        <td><span class="status-badge status-active"><i class="fas fa-check-circle"></i> Active</span></td>
+                        <td>
+                            <button class="action-btn" onclick="viewProvider('provider2')">View</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="provider-name">New Bakery Co</td>
+                        <td>Nairobi, Kibera</td>
+                        <td>0</td>
+                        <td>-</td>
+                        <td><span class="status-badge status-pending"><i class="fas fa-hourglass-half"></i> Pending</span></td>
+                        <td>
+                            <button class="action-btn" onclick="approveProvider('provider3')">Approve</button>
+                            <button class="action-btn danger" onclick="rejectProvider('provider3')">Reject</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="provider-name">Suspended Baker</td>
+                        <td>Nairobi, Runda</td>
+                        <td>450</td>
+                        <td>2.1 ⭐</td>
+                        <td><span class="status-badge" style="background: rgba(255, 107, 107, 0.1); color: #FF6B6B;"><i class="fas fa-ban"></i> Suspended</span></td>
+                        <td>
+                            <button class="action-btn" onclick="viewProvider('provider4')">View</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        function navigateTo(section) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+            console.log('Navigating to:', section);
+        }
+
+        function switchProviderTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            console.log('Switched to:', tab);
+        }
+
+        function reviewDispute() {
+            alert('Opening dispute review modal');
+        }
+
+        function dismissAlert() {
+            alert('Alert dismissed');
+        }
+
+        function reviewContent() {
+            alert('Opening content review modal');
+        }
+
+        function removeReview() {
+            alert('Review removed');
+        }
+
+        function reviewApplications() {
+            alert('Opening provider applications');
+        }
+
+        function contactProvider() {
+            alert('Opening provider contact dialog');
+        }
+
+        function viewProvider(id) {
+            alert('Opening provider details for ' + id);
+        }
+
+        function approveProvider(id) {
+            alert('Provider ' + id + ' approved');
+        }
+
+        function rejectProvider(id) {
+            alert('Provider ' + id + ' rejected');
+        }
+
+        // Charts
+        document.addEventListener('DOMContentLoaded', () => {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5'],
+                    datasets: [{
+                        label: 'Revenue (KES)',
+                        data: [120000000, 135000000, 145000000, 160000000, 185000000],
+                        borderColor: '#7699D4',
+                        backgroundColor: 'rgba(118, 153, 212, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+
+            // Volume Chart
+            const volumeCtx = document.getElementById('volumeChart').getContext('2d');
+            new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Orders',
+                        data: [320, 380, 350, 420, 390, 450, 480],
+                        backgroundColor: '#2FB492'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

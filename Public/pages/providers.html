@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find Providers - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Custom Styling -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .provider-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .provider-card:hover {
+            border-color: #7699D4;
+            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .provider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .provider-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7699D4 0%, #2FB492 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .provider-info {
+            flex: 1;
+        }
+
+        .provider-name {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .provider-title {
+            color: var(--primary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .provider-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stars {
+            color: #FFD700;
+            font-size: var(--font-size-sm);
+        }
+
+        .rating-text {
+            color: var(--text-secondary);
+            font-size: var(--font-size-xs);
+        }
+
+        .provider-location {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .provider-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid rgba(118, 153, 212, 0.1);
+            border-bottom: 1px solid rgba(118, 153, 212, 0.1);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-tertiary);
+            margin-top: var(--spacing-xs);
+        }
+
+        .provider-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+            margin: var(--spacing-lg) 0;
+        }
+
+        .feature-tag {
+            background: rgba(118, 153, 212, 0.1);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            color: var(--primary);
+            padding: var(--spacing-sm) var(--spacing-md);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .provider-actions {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            background: rgba(118, 153, 212, 0.05);
+            color: var(--primary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(118, 153, 212, 0.15);
+            border-color: #7699D4;
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            border: none;
+            color: white;
+        }
+
+        .action-btn.primary:hover {
+            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .filters-section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .filter-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-md);
+            display: block;
+            font-size: var(--font-size-sm);
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: #7699D4;
+            background: rgba(118, 153, 212, 0.1);
+        }
+
+        .price-range {
+            display: flex;
+            gap: var(--spacing-md);
+            align-items: center;
+        }
+
+        .price-range input {
+            flex: 1;
+        }
+
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: var(--spacing-xl);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: var(--spacing-3xl);
+            color: var(--text-secondary);
+        }
+
+        .no-results-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-lg);
+            opacity: 0.5;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sort-select {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(118, 153, 212, 0.1);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        @media (max-width: 768px) {
+            .providers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-section {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-xl border-bottom">
+        <div class="container flex-between">
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                    <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+                </a>
+                <div>
+                    <h1 style="margin: 0;">Find Your Baker</h1>
+                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Discover local bakers matching your requirements</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-3xl">
+        <!-- Filters Section -->
+        <div class="filters-section">
+            <h3 style="margin-top: 0; margin-bottom: var(--spacing-xl);">
+                <i class="fas fa-filter" style="margin-right: var(--spacing-md);"></i>Filter Providers
+            </h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+                <div class="filter-group">
+                    <label class="filter-label">Search by name or location</label>
+                    <input type="text" class="filter-input" id="searchInput" placeholder="Search..." oninput="filterProviders()">
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Rating</label>
+                    <select class="filter-input" id="ratingFilter" onchange="filterProviders()">
+                        <option value="">All ratings</option>
+                        <option value="5">⭐ 5 Stars</option>
+                        <option value="4">⭐ 4+ Stars</option>
+                        <option value="3">⭐ 3+ Stars</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Price Range (KES)</label>
+                    <div class="price-range">
+                        <input type="number" class="filter-input" id="minPrice" placeholder="Min" oninput="filterProviders()">
+                        <span>-</span>
+                        <input type="number" class="filter-input" id="maxPrice" placeholder="Max" oninput="filterProviders()">
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Delivery Days</label>
+                    <select class="filter-input" id="deliveryFilter" onchange="filterProviders()">
+                        <option value="">Any</option>
+                        <option value="same">Same day</option>
+                        <option value="next">Next day</option>
+                        <option value="week">This week</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sort Controls -->
+        <div class="sort-controls">
+            <div class="results-count">
+                Showing <span id="resultCount">12</span> providers
+            </div>
+            <div>
+                <label style="margin-right: var(--spacing-md); color: var(--text-secondary); font-size: var(--font-size-sm);">Sort by:</label>
+                <select class="sort-select" id="sortSelect" onchange="sortProviders()">
+                    <option value="rating">Highest Rating</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="reviews">Most Reviews</option>
+                    <option value="distance">Nearest</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Providers Grid -->
+        <div class="providers-grid" id="providersGrid">
+            <!-- Populated by JavaScript -->
+        </div>
+
+        <div id="noResults" class="no-results" style="display: none;">
+            <div class="no-results-icon">🔍</div>
+            <h3>No providers found</h3>
+            <p>Try adjusting your filters to see more results</p>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-top py-lg text-center text-tertiary">
+        <p>&copy; 2026 Customatch. Connecting you with local bakers.</p>
+    </footer>
+
+    <script>
+        // Sample provider data
+        const providers = [
+            {
+                id: 1,
+                name: "Sweet Dreams Bakery",
+                title: "Master Pastry Chef",
+                avatar: "🎂",
+                rating: 5,
+                reviews: 342,
+                location: "Nairobi, Karen",
+                distance: "2.3 km",
+                basePrice: 3500,
+                orders: 1200,
+                delivery: "same",
+                features: ["Custom Designs", "Fondant Art", "Sugar Flowers", "Same-day Delivery"]
+            },
+            {
+                id: 2,
+                name: "Artisan Cake Studio",
+                title: "Cake Designer",
+                avatar: "👨‍🍳",
+                rating: 4.8,
+                reviews: 287,
+                location: "Nairobi, Westlands",
+                distance: "3.1 km",
+                basePrice: 4200,
+                orders: 890,
+                delivery: "next",
+                features: ["3D Cakes", "Chocolate Art", "Delivery Available", "Consultation"]
+            },
+            {
+                id: 3,
+                name: "Heavenly Creations",
+                title: "Professional Baker",
+                avatar: "👩‍🍳",
+                rating: 4.9,
+                reviews: 415,
+                location: "Nairobi, Kilimani",
+                distance: "1.8 km",
+                basePrice: 2800,
+                orders: 1500,
+                delivery: "same",
+                features: ["Budget-friendly", "Quick Turnaround", "Popular Designs", "Trending Styles"]
+            },
+            {
+                id: 4,
+                name: "Luxury Cake Boutique",
+                title: "Premium Baker",
+                avatar: "✨",
+                rating: 4.7,
+                reviews: 198,
+                location: "Nairobi, Parklands",
+                distance: "4.2 km",
+                basePrice: 6500,
+                orders: 450,
+                delivery: "next",
+                features: ["Luxury Designs", "Exotic Ingredients", "Premium Quality", "Corporate Events"]
+            },
+            {
+                id: 5,
+                name: "Love & Cake",
+                title: "Wedding Specialist",
+                avatar: "💕",
+                rating: 5,
+                reviews: 156,
+                location: "Nairobi, Runda",
+                distance: "5.1 km",
+                basePrice: 8000,
+                orders: 320,
+                delivery: "week",
+                features: ["Wedding Cakes", "Tiered Designs", "Premium Service", "Event Coordination"]
+            },
+            {
+                id: 6,
+                name: "Quick Bake Express",
+                title: "Fast Baker",
+                avatar: "⚡",
+                rating: 4.5,
+                reviews: 523,
+                location: "Nairobi, Eastleigh",
+                distance: "1.2 km",
+                basePrice: 1500,
+                orders: 2100,
+                delivery: "same",
+                features: ["Super Fast", "Affordable", "Popular", "Always Available"]
+            },
+            {
+                id: 7,
+                name: "Artisanal Treats",
+                title: "Urban Baker",
+                avatar: "🌟",
+                rating: 4.8,
+                reviews: 234,
+                location: "Nairobi, Ngong Road",
+                distance: "3.5 km",
+                basePrice: 4500,
+                orders: 620,
+                delivery: "next",
+                features: ["Vegan Options", "Gluten-free", "Organic Ingredients", "Instagram Famous"]
+            },
+            {
+                id: 8,
+                name: "Classic Bakehouse",
+                title: "Traditional Baker",
+                avatar: "🏠",
+                rating: 4.6,
+                reviews: 189,
+                location: "Nairobi, Hurlingham",
+                distance: "2.9 km",
+                basePrice: 3200,
+                orders: 780,
+                delivery: "same",
+                features: ["Traditional Recipes", "Family Business", "Love & Care", "Best Quality"]
+            },
+            {
+                id: 9,
+                name: "Modern Confections",
+                title: "Contemporary Baker",
+                avatar: "🎨",
+                rating: 4.9,
+                reviews: 301,
+                location: "Nairobi, Thika Road",
+                distance: "6.3 km",
+                basePrice: 5200,
+                orders: 540,
+                delivery: "next",
+                features: ["Modern Designs", "Minimalist Style", "Social Media", "Trendy Flavors"]
+            },
+            {
+                id: 10,
+                name: "Premium Pastries",
+                title: "Master Chef",
+                avatar: "👑",
+                rating: 5,
+                reviews: 267,
+                location: "Nairobi, Muthaiga",
+                distance: "7.1 km",
+                basePrice: 7500,
+                orders: 380,
+                delivery: "week",
+                features: ["Award Winner", "Fine Dining", "Corporate", "Michelin Trained"]
+            },
+            {
+                id: 11,
+                name: "Cake Corner",
+                title: "Community Baker",
+                avatar: "🏘️",
+                rating: 4.4,
+                reviews: 412,
+                location: "Nairobi, Kibera",
+                distance: "0.8 km",
+                basePrice: 1800,
+                orders: 1650,
+                delivery: "same",
+                features: ["Neighborhood Favorite", "Reliable", "Affordable", "Always Busy"]
+            },
+            {
+                id: 12,
+                name: "Divine Cakes Co",
+                title: "Specialty Baker",
+                avatar: "🙏",
+                rating: 4.7,
+                reviews: 245,
+                location: "Nairobi, Spring Valley",
+                distance: "4.8 km",
+                basePrice: 5800,
+                orders: 710,
+                delivery: "next",
+                features: ["Specialty Flavors", "Diet-Friendly", "Customizable", "Premium Toppings"]
+            }
+        ];
+
+        let filteredProviders = [...providers];
+
+        function renderProviders(list) {
+            const grid = document.getElementById('providersGrid');
+            const noResults = document.getElementById('noResults');
+
+            if (list.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                document.getElementById('resultCount').textContent = '0';
+                return;
+            }
+
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            document.getElementById('resultCount').textContent = list.length;
+
+            grid.innerHTML = list.map(provider => `
+                <div class="provider-card">
+                    <div class="provider-header">
+                        <div style="display: flex; gap: var(--spacing-lg);">
+                            <div class="provider-avatar">${provider.avatar}</div>
+                            <div class="provider-info">
+                                <div class="provider-name">${provider.name}</div>
+                                <div class="provider-title">${provider.title}</div>
+                                <div class="provider-rating">
+                                    <span class="stars">${'★'.repeat(Math.floor(provider.rating))}${'☆'.repeat(5 - Math.floor(provider.rating))}</span>
+                                    <span class="rating-text">${provider.rating} (${provider.reviews})</span>
+                                </div>
+                                <div class="provider-location">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    ${provider.location}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="provider-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">KES ${provider.basePrice.toLocaleString()}</div>
+                            <div class="stat-label">Starting Price</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${provider.orders}</div>
+                            <div class="stat-label">Orders</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">${provider.distance}</div>
+                            <div class="stat-label">Distance</div>
+                        </div>
+                    </div>
+
+                    <div class="provider-features">
+                        ${provider.features.map(f => `<div class="feature-tag">${f}</div>`).join('')}
+                    </div>
+
+                    <div class="provider-actions">
+                        <button class="action-btn" onclick="viewProfile(${provider.id})">
+                            <i class="fas fa-eye"></i> View Profile
+                        </button>
+                        <button class="action-btn primary" onclick="selectProvider(${provider.id})">
+                            <i class="fas fa-check"></i> Select
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterProviders() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const rating = parseFloat(document.getElementById('ratingFilter').value) || 0;
+            const minPrice = parseFloat(document.getElementById('minPrice').value) || 0;
+            const maxPrice = parseFloat(document.getElementById('maxPrice').value) || 999999;
+            const delivery = document.getElementById('deliveryFilter').value;
+
+            filteredProviders = providers.filter(p => {
+                const matchSearch = p.name.toLowerCase().includes(search) || p.location.toLowerCase().includes(search);
+                const matchRating = rating === 0 || p.rating >= rating;
+                const matchPrice = p.basePrice >= minPrice && p.basePrice <= maxPrice;
+                const matchDelivery = !delivery || p.delivery === delivery;
+                return matchSearch && matchRating && matchPrice && matchDelivery;
+            });
+
+            renderProviders(filteredProviders);
+        }
+
+        function sortProviders() {
+            const sortBy = document.getElementById('sortSelect').value;
+
+            switch(sortBy) {
+                case 'rating':
+                    filteredProviders.sort((a, b) => b.rating - a.rating);
+                    break;
+                case 'price-low':
+                    filteredProviders.sort((a, b) => a.basePrice - b.basePrice);
+                    break;
+                case 'price-high':
+                    filteredProviders.sort((a, b) => b.basePrice - a.basePrice);
+                    break;
+                case 'reviews':
+                    filteredProviders.sort((a, b) => b.reviews - a.reviews);
+                    break;
+                case 'distance':
+                    filteredProviders.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+                    break;
+            }
+
+            renderProviders(filteredProviders);
+        }
+
+        function viewProfile(id) {
+            const provider = providers.find(p => p.id === id);
+            alert(`Viewing profile for ${provider.name}\nThis would open their detailed profile page.`);
+        }
+
+        function selectProvider(id) {
+            const provider = providers.find(p => p.id === id);
+            sessionStorage.setItem('selectedProvider', JSON.stringify(provider));
+            window.location.href = 'checkout.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderProviders(providers);
+        });
+    </script>
+</body>
+</html>

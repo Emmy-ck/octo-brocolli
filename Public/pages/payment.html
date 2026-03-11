@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Payment - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Custom Styling -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .payment-container {
+            max-width: 600px;
+            margin: var(--spacing-3xl) auto;
+        }
+
+        .payment-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-3xl);
+        }
+
+        .payment-header {
+            text-align: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .payment-icon {
+            font-size: 3rem;
+            margin-bottom: var(--spacing-lg);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .payment-title {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .payment-subtitle {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .order-summary {
+            background: rgba(118, 153, 212, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .summary-row.total {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--primary);
+            padding-top: var(--spacing-lg);
+            border-top: 1px solid rgba(118, 153, 212, 0.3);
+            margin-top: var(--spacing-lg);
+        }
+
+        .payment-method-display {
+            background: rgba(118, 153, 212, 0.05);
+            border-left: 3px solid #7699D4;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-xl);
+        }
+
+        .method-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .method-name {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: var(--font-size-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .mpesa-interface {
+            background: linear-gradient(135deg, #2FB492 0%, #1FA391 100%);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-gl);
+            color: white;
+            margin-bottom: var(--spacing-xl);
+            display: none;
+        }
+
+        .mpesa-interface.active {
+            display: block;
+        }
+
+        .mpesa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            font-weight: 600;
+        }
+
+        .mpesa-body {
+            background: rgba(0, 0, 0, 0.1);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+            text-align: center;
+        }
+
+        .mpesa-amount {
+            font-size: var(--font-size-3xl);
+            font-weight: 600;
+            margin-bottom: var(--spacing-md);
+        }
+
+        .mpesa-instruction {
+            font-size: var(--font-size-sm);
+            line-height: 1.6;
+            background: rgba(0, 0, 0, 0.2);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .instruction-step {
+            margin-bottom: var(--spacing-md);
+            text-align: left;
+        }
+
+        .instruction-number {
+            background: white;
+            color: #2FB492;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: var(--spacing-md);
+        }
+
+        .card-form {
+            display: none;
+        }
+
+        .card-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #7699D4;
+            background: rgba(118, 153, 212, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: var(--spacing-lg);
+        }
+
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            background: rgba(47, 180, 146, 0.1);
+            border: 1px solid rgba(47, 180, 146, 0.2);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-bottom: var(--spacing-xl);
+            font-size: var(--font-size-sm);
+        }
+
+        .security-icon {
+            color: #2FB492;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-top: var(--spacing-xl);
+        }
+
+        .btn {
+            flex: 1;
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: var(--font-size-md);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 15px 40px rgba(118, 153, 212, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(118, 153, 212, 0.2);
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: var(--spacing-3xl);
+            text-align: center;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .progress-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(118, 153, 212, 0.1);
+            border: 2px solid rgba(118, 153, 212, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .progress-circle.active {
+            background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
+            border-color: #7699D4;
+            color: white;
+            box-shadow: 0 0 15px rgba(118, 153, 212, 0.3);
+        }
+
+        .progress-circle.completed {
+            background: linear-gradient(135deg, #2FB492 0%, #1FA391 100%);
+            border-color: #2FB492;
+            color: white;
+        }
+
+        .progress-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-tertiary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="p-xl border-bottom">
+        <div class="container flex-between">
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="checkout.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                    <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+                </a>
+                <div>
+                    <h1 style="margin: 0;">Secure Payment</h1>
+                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Complete your order with secure payment</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container py-3xl">
+        <!-- Progress -->
+        <div class="progress-steps">
+            <div class="progress-step">
+                <div class="progress-circle completed"><i class="fas fa-check"></i></div>
+                <div class="progress-label">Design</div>
+            </div>
+            <div class="progress-step">
+                <div class="progress-circle completed"><i class="fas fa-check"></i></div>
+                <div class="progress-label">Order</div>
+            </div>
+            <div class="progress-step">
+                <div class="progress-circle active">3</div>
+                <div class="progress-label">Payment</div>
+            </div>
+            <div class="progress-step">
+                <div class="progress-circle">4</div>
+                <div class="progress-label">Confirmation</div>
+            </div>
+        </div>
+
+        <div class="payment-container">
+            <div class="payment-card">
+                <!-- Header -->
+                <div class="payment-header">
+                    <div class="payment-icon">🔐</div>
+                    <h2 class="payment-title">Secure Payment</h2>
+                    <p class="payment-subtitle">Your payment is protected by encryption technology</p>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="order-summary">
+                    <div class="summary-row">
+                        <span>Order ID:</span>
+                        <span id="orderId" style="font-weight: 600; color: var(--primary);">#ORD-2026031100001</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Cake Type:</span>
+                        <span id="cakeType" style="font-weight: 600;">Round Vanilla</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery Date:</span>
+                        <span id="deliveryDate" style="font-weight: 600;">March 15, 2026</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Amount to Pay:</span>
+                        <span id="totalAmount">KES 4,300</span>
+                    </div>
+                </div>
+
+                <!-- Payment Method Display -->
+                <div class="payment-method-display">
+                    <div class="method-label">Selected Payment Method</div>
+                    <div class="method-name" id="selectedMethodDisplay">
+                        <i class="fas fa-mobile-alt"></i>
+                        M-Pesa
+                    </div>
+                </div>
+
+                <!-- M-Pesa Payment Interface -->
+                <div class="mpesa-interface active" id="mpesaPayment">
+                    <div class="mpesa-header">
+                        <span>Safaricom M-Pesa</span>
+                        <span>☐ ☒ ☒</span>
+                    </div>
+                    <div class="mpesa-body">
+                        <div class="mpesa-amount" id="mpesaAmount">KES 4,300</div>
+                        <p style="margin: 0; font-size: var(--font-size-sm);">Amount to send</p>
+                    </div>
+                    <div class="mpesa-instruction">
+                        <div style="font-weight: 600; margin-bottom: var(--spacing-lg);">Follow these steps:</div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">1</span>
+                            <span>On your phone, dial <strong>*150*00#</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">2</span>
+                            <span>Select <strong>Lipa na M-Pesa Online</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">3</span>
+                            <span>Enter <strong>Business Number: 171171</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">4</span>
+                            <span>Enter <strong>Account Reference: ORD-2026031100001</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">5</span>
+                            <span>Enter amount: <strong>KES 4,300</strong></span>
+                        </div>
+                        <div class="instruction-step">
+                            <span class="instruction-number">6</span>
+                            <span>Enter your <strong>M-Pesa PIN</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Payment Form -->
+                <div class="card-form" id="cardForm">
+                    <div class="form-group">
+                        <label class="form-label">Card Number</label>
+                        <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Card Holder Name</label>
+                        <input type="text" class="form-input" placeholder="John Doe">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Expiry Date</label>
+                            <input type="text" class="form-input" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">CVV</label>
+                            <input type="text" class="form-input" placeholder="123" maxlength="3">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Postal Code</label>
+                            <input type="text" class="form-input" placeholder="00100">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Info -->
+                <div class="security-info">
+                    <div class="security-icon">🔒</div>
+                    <div>
+                        <strong>Secure Payment</strong><br>
+                        Your payment information is encrypted and secure. We use industry-standard PCI DSS compliance.
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="window.location.href='checkout.html'">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary" onclick="processPayment()">
+                        <i class="fas fa-check"></i> Confirm Payment
+                    </button>
+                </div>
+
+                <p style="text-align: center; color: var(--text-tertiary); font-size: var(--font-size-xs); margin-top: var(--spacing-xl); margin-bottom: 0;">
+                    By clicking Confirm Payment, you agree to the payment terms and conditions.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-top py-lg text-center text-tertiary" style="margin-top: var(--spacing-3xl);">
+        <p>&copy; 2026 Customatch. Secure transactions powered by industry leaders.</p>
+    </footer>
+
+    <script>
+        const orderData = JSON.parse(sessionStorage.getItem('orderData') || '{}');
+
+        function updatePaymentDisplay() {
+            // Generate Order ID
+            const orderId = '#ORD-' + new Date().getFullYear() + String(new Date().getMonth() + 1).padStart(2, '0') + String(new Date().getDate()).padStart(2, '0') + Math.random().toString().slice(2, 8);
+            
+            document.getElementById('orderId').textContent = orderId;
+            document.getElementById('totalAmount').textContent = `KES ${orderData.totalAmount?.toLocaleString() || '4,300'}`;
+            document.getElementById('mpesaAmount').textContent = `KES ${orderData.totalAmount?.toLocaleString() || '4,300'}`;
+            
+            if (orderData.customer?.deliveryDate) {
+                document.getElementById('deliveryDate').textContent = new Date(orderData.customer.deliveryDate).toLocaleDateString('en-US', {year: 'numeric', month: 'long', day: 'numeric'});
+            }
+        }
+
+        function processPayment() {
+            const orderConfirmation = {
+                ...orderData,
+                orderId: document.getElementById('orderId').textContent,
+                transactionId: 'TXN-' + Math.random().toString(36).substring(2, 11).toUpperCase(),
+                status: 'processing',
+                paymentTime: new Date().toISOString()
+            };
+
+            sessionStorage.setItem('orderConfirmation', JSON.stringify(orderConfirmation));
+            
+            // Simulate payment processing with loading state
+            const btn = event.target;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            setTimeout(() => {
+                window.location.href = 'confirmation.html';
+            }, 2000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updatePaymentDisplay();
+        });
+    </script>
+</body>
+</html>
