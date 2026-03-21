@@ -769,29 +769,29 @@
                         <div class="form-group">
                             <label class="form-label">Cake Fillings</label>
                             <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
-                                <label class="checkbox-option">
-                                    <input type="checkbox" value="chocolate-ganache" onchange="calculatePrice();">
+<label class="checkbox-option">
+                                    <input type="checkbox" value="chocolate-ganache" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Chocolate Ganache</strong>
                                         <p>Rich chocolate layer (+ KES 200)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="fruit-filling" onchange="calculatePrice();">
+                                    <input type="checkbox" value="fruit-filling" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Fresh Fruit Filling</strong>
                                         <p>Mixed berries (+ KES 300)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="cream-cheese" onchange="calculatePrice();">
+                                    <input type="checkbox" value="cream-cheese" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Cream Cheese</strong>
                                         <p>Smooth and tangy (+ KES 250)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="caramel" onchange="calculatePrice();">
+                                    <input type="checkbox" value="caramel" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Caramel</strong>
                                         <p>Sweet and buttery (+ KES 200)</p>
@@ -860,39 +860,39 @@
                         <h3 class="step-title"><i class="fas fa-sparkles" style="margin-right: var(--spacing-md);"></i>Decorations & Theme</h3>
                         <p class="step-description">Add decorations and select a theme</p>
                         
-                        <div class="form-group">
+<div class="form-group">
                             <label class="form-label">Decoration Styles (Select multiple)</label>
                             <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="flowers" onchange="calculatePrice();">
+                                    <input type="checkbox" value="flowers" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>🌹 Flowers</strong>
                                         <p>Fresh or sugar flowers (+ KES 300)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="sprinkles" onchange="calculatePrice();">
+                                    <input type="checkbox" value="sprinkles" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>✨ Sprinkles</strong>
                                         <p>Colorful sugar sprinkles (+ KES 100)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="berries" onchange="calculatePrice();">
+                                    <input type="checkbox" value="berries" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>🫐 Fresh Berries</strong>
                                         <p>Topped with fresh fruit (+ KES 400)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="pearls" onchange="calculatePrice();">
+                                    <input type="checkbox" value="pearls" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>⚪ Pearl Beads</strong>
                                         <p>Elegant pearl decoration (+ KES 250)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="candles" onchange="calculatePrice();">
+                                    <input type="checkbox" value="candles" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>🕯️ Birthday Candles</strong>
                                         <p>Candles for cake (+ KES 50)</p>
@@ -939,15 +939,15 @@
                                         <p>No animal products</p>
                                     </span>
                                 </label>
-                                <label class="checkbox-option">
-                                    <input type="checkbox" value="sugar-free" onchange="calculatePrice();">
+<label class="checkbox-option">
+                                    <input type="checkbox" value="sugar-free" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Sugar-Free</strong>
                                         <p>Uses artificial sweeteners (+ KES 150)</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="gluten-free" onchange="calculatePrice();">
+                                    <input type="checkbox" value="gluten-free" onchange="updatePreview(); calculatePrice();">
                                     <span class="checkbox-label">
                                         <strong>Gluten-Free</strong>
                                         <p>Safe for celiac diets (+ KES 200)</p>
@@ -956,9 +956,9 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+<div class="form-group">
                             <label class="form-label">Allergen Information</label>
-                            <textarea class="form-input" id="allergens" placeholder="List any allergies (e.g., peanuts, tree nuts, shellfish)" style="min-height: 100px; resize: vertical;"></textarea>
+                            <textarea class="form-input" id="allergens" placeholder="List any allergies (e.g., peanuts, tree nuts, shellfish)" style="min-height: 100px; resize: vertical;" oninput="updatePreview();"></textarea>
                         </div>
                     </div>
 
@@ -978,9 +978,9 @@
                                     <input type="range" id="quantity" min="1" max="10" value="1" onchange="updatePreview(); calculatePrice()">
                                 </div>
                             </div>
-                            <div class="form-group">
+<div class="form-group">
                                 <label class="form-label">Delivery Type</label>
-                                <select class="form-input" id="deliveryType" onchange="calculatePrice();">
+                                <select class="form-input" id="deliveryType" onchange="updatePreview(); calculatePrice();">
                                     <option value="delivery">Delivery (+ KES 200)</option>
                                     <option value="pickup">Pickup</option>
                                 </select>
@@ -990,11 +990,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Delivery/Pickup Date</label>
-                                <input type="date" class="form-input" id="deliveryDate" onchange="validateDeliveryDate();">
+                                <input type="date" class="form-input" id="deliveryDate" onchange="updatePreview(); validateDeliveryDate();">
                             </div>
                             <div class="form-group">
                                 <label class="form-label">Preferred Time</label>
-                                <select class="form-input" id="deliveryTime" onchange="calculatePrice();">
+                                <select class="form-input" id="deliveryTime" onchange="updatePreview(); calculatePrice();">
                                     <option value="morning">Morning (8 AM - 12 PM)</option>
                                     <option value="afternoon">Afternoon (12 PM - 5 PM)</option>
                                     <option value="evening">Evening (5 PM - 8 PM) - + KES 100</option>
@@ -1027,9 +1027,9 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
+<div class="form-group">
                             <label class="form-label">Additional Notes</label>
-                            <textarea class="form-input" id="notes" placeholder="Share any special requests or ideas (e.g., color preferences, style inspiration)" style="min-height: 100px; resize: vertical;" maxlength="500"></textarea>
+                            <textarea class="form-input" id="notes" placeholder="Share any special requests or ideas (e.g., color preferences, style inspiration)" style="min-height: 100px; resize: vertical;" maxlength="500" oninput="updatePreview();"></textarea>
                         </div>
                     </div>
 
@@ -1717,29 +1717,7 @@
                 goToStep(currentStep + 1);
             } else if (currentStep === totalSteps) {
                 // Collect all form data
-                designData.tiers = document.getElementById('tiers').value;
-                designData.size = document.getElementById('size').value;
-                designData.icingType = document.getElementById('icingType')?.value || designData.icingType;
-                designData.theme = document.getElementById('theme').value;
-                designData.quantity = document.getElementById('quantity').value;
-                designData.deliveryType = document.getElementById('deliveryType').value;
-                designData.deliveryDate = document.getElementById('deliveryDate').value;
-                designData.deliveryTime = document.getElementById('deliveryTime').value;
-                designData.allergens = document.getElementById('allergens').value;
-                designData.inscription = document.getElementById('inscription').value;
-                designData.notes = document.getElementById('notes').value;
-                designData.dietary = Array.from(document.querySelectorAll('input[value="eggless"], input[value="vegan"], input[value="sugar-free"], input[value="gluten-free"]'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                designData.flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                designData.fillings = Array.from(document.querySelectorAll('input[value="chocolate-ganache"], input[value="fruit-filling"], input[value="cream-cheese"], input[value="caramel"]'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
-                designData.decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
-                    .filter(cb => cb.checked)
-                    .map(cb => cb.value);
+                captureCurrentStepData();
 
                 console.log('Design submitted:', designData);
                 sessionStorage.setItem('designData', JSON.stringify(designData));
@@ -1754,18 +1732,32 @@
         }
 
         function goToStep(step) {
+            // Save current step data to designData first
+            captureCurrentStepData();
+
             // Hide current step
             document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.remove('active');
             document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('active');
 
-            // Mark as completed
-            document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('completed');
+            // Mark as completed only if moving forward
+            if (step > currentStep) {
+                document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('completed');
+            }
 
             // Show new step
             currentStep = step;
             document.querySelector(`.step-content[data-step="${currentStep}"]`).classList.add('active');
             document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.remove('completed');
             document.querySelector(`.step-circle[data-step="${currentStep}"]`).classList.add('active');
+
+            // Sync form fields with current designData
+            syncFormFields();
+
+            // Update preview and visualization in real-time
+            setTimeout(() => {
+                updatePreview();
+                calculatePrice();
+            }, 50);
 
             // Update buttons
             document.getElementById('prevBtn').style.display = currentStep > 1 ? 'block' : 'none';
@@ -1777,6 +1769,157 @@
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function captureCurrentStepData() {
+            // Capture all current form data into designData before switching steps
+            designData.shape = designData.shape || 'round';
+            designData.size = document.getElementById('size')?.value || designData.size;
+            designData.tiers = document.getElementById('tiers')?.value || designData.tiers;
+            designData.theme = document.getElementById('theme')?.value || designData.theme;
+            designData.quantity = document.getElementById('quantity')?.value || designData.quantity;
+            designData.deliveryType = document.getElementById('deliveryType')?.value || designData.deliveryType;
+            designData.deliveryDate = document.getElementById('deliveryDate')?.value || designData.deliveryDate;
+            designData.deliveryTime = document.getElementById('deliveryTime')?.value || designData.deliveryTime;
+            designData.allergens = document.getElementById('allergens')?.value || designData.allergens;
+            designData.inscription = document.getElementById('inscription')?.value || designData.inscription;
+            designData.notes = document.getElementById('notes')?.value || designData.notes;
+            
+            // Capture checkbox states
+            designData.dietary = Array.from(document.querySelectorAll('input[value="eggless"], input[value="vegan"], input[value="sugar-free"], input[value="gluten-free"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+            designData.flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+            designData.fillings = Array.from(document.querySelectorAll('input[value="chocolate-ganache"], input[value="fruit-filling"], input[value="cream-cheese"], input[value="caramel"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+            designData.decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
+                .filter(cb => cb.checked).map(cb => cb.value);
+        }
+
+        function syncFormFields() {
+            // Sync shape - select option cards based on designData.shape
+            document.querySelectorAll('.step-content[data-step="1"] .option-card').forEach(card => {
+                const value = card.getAttribute('data-value');
+                if (value) {
+                    if (value === designData.shape) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+
+            // Sync size select
+            const sizeEl = document.getElementById('size');
+            if (sizeEl) {
+                sizeEl.value = designData.size || '8';
+            }
+
+            // Sync tiers select
+            const tiersEl = document.getElementById('tiers');
+            if (tiersEl) {
+                tiersEl.value = designData.tiers || '1';
+            }
+
+            // Sync flavor checkboxes
+            document.querySelectorAll('input[type="checkbox"][value="vanilla"], input[type="checkbox"][value="chocolate"], input[type="checkbox"][value="strawberry"], input[type="checkbox"][value="red-velvet"], input[type="checkbox"][value="carrot"]')
+                .forEach(cb => {
+                    cb.checked = (designData.flavors && designData.flavors.includes(cb.value)) || (cb.value === 'vanilla' && (!designData.flavors || designData.flavors.length === 0));
+                });
+
+            // Sync fillings checkboxes
+            document.querySelectorAll('input[type="checkbox"][value="chocolate-ganache"], input[type="checkbox"][value="fruit-filling"], input[type="checkbox"][value="cream-cheese"], input[type="checkbox"][value="caramel"]')
+                .forEach(cb => {
+                    cb.checked = designData.fillings && designData.fillings.includes(cb.value);
+                });
+
+            // Sync icing type option cards
+            document.querySelectorAll('.step-content[data-step="3"] .option-card').forEach(card => {
+                const value = card.getAttribute('data-value');
+                if (value) {
+                    if (value === designData.icingType) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                }
+            });
+
+            // Sync icing color
+            if (designData.icingColor) {
+                document.querySelectorAll('.step-content[data-step="3"] div[style*="background"]').forEach(colorDiv => {
+                    colorDiv.style.borderWidth = '';
+                    colorDiv.style.borderColor = '';
+                });
+                // Find and highlight the selected color (this is tricky without data attributes, so we'll skip for now)
+            }
+
+            // Sync decorations checkboxes
+            document.querySelectorAll('input[type="checkbox"][value="flowers"], input[type="checkbox"][value="sprinkles"], input[type="checkbox"][value="berries"], input[type="checkbox"][value="pearls"], input[type="checkbox"][value="candles"]')
+                .forEach(cb => {
+                    cb.checked = designData.decorations && designData.decorations.includes(cb.value);
+                });
+
+            // Sync theme select
+            const themeEl = document.getElementById('theme');
+            if (themeEl) {
+                themeEl.value = designData.theme || 'classic';
+            }
+
+            // Sync dietary checkboxes
+            document.querySelectorAll('input[type="checkbox"][value="eggless"], input[type="checkbox"][value="vegan"], input[type="checkbox"][value="sugar-free"], input[type="checkbox"][value="gluten-free"]')
+                .forEach(cb => {
+                    cb.checked = designData.dietary && designData.dietary.includes(cb.value);
+                });
+
+            // Sync allergens textarea
+            const allergensEl = document.getElementById('allergens');
+            if (allergensEl) {
+                allergensEl.value = designData.allergens || '';
+            }
+
+            // Sync quantity
+            const quantityEl = document.getElementById('quantity');
+            if (quantityEl) {
+                quantityEl.value = designData.quantity || '1';
+                document.getElementById('quantityValue').textContent = quantityEl.value;
+            }
+
+            // Sync delivery type select
+            const deliveryTypeEl = document.getElementById('deliveryType');
+            if (deliveryTypeEl) {
+                deliveryTypeEl.value = designData.deliveryType || 'delivery';
+            }
+
+            // Sync delivery date
+            const deliveryDateEl = document.getElementById('deliveryDate');
+            if (deliveryDateEl) {
+                deliveryDateEl.value = designData.deliveryDate || '';
+            }
+
+            // Sync delivery time select
+            const deliveryTimeEl = document.getElementById('deliveryTime');
+            if (deliveryTimeEl) {
+                deliveryTimeEl.value = designData.deliveryTime || 'morning';
+            }
+
+            // Sync inscription textarea
+            const inscriptionEl = document.getElementById('inscription');
+            if (inscriptionEl) {
+                inscriptionEl.value = designData.inscription || '';
+                document.getElementById('charCount').textContent = inscriptionEl.value.length;
+            }
+
+            // Sync notes textarea
+            const notesEl = document.getElementById('notes');
+            if (notesEl) {
+                notesEl.value = designData.notes || '';
+            }
+
+            // Re-render images if on step 7
+            if (currentStep === 7) {
+                renderUploadedImages();
+            }
         }
 
         // Initialize
@@ -1804,14 +1947,58 @@
             tomorrow.setDate(tomorrow.getDate() + 1);
             document.getElementById('deliveryDate').min = tomorrow.toISOString().split('T')[0];
 
-            // Add click handlers to step circles
+            // Add click handlers to step circles - allow clicking ANY step for non-linear navigation
             document.querySelectorAll('.step-circle').forEach(circle => {
                 circle.addEventListener('click', function() {
                     const step = parseInt(this.dataset.step);
-                    if (step <= currentStep) {
-                        goToStep(step);
-                    }
+                    goToStep(step);
                 });
+            });
+
+            // Ensure form elements update designData when changed
+            // Hook into the existing inline onchange handlers by monitoring form changes
+            document.addEventListener('change', (e) => {
+                if (e.target.id === 'size') {
+                    designData.size = e.target.value;
+                } else if (e.target.id === 'tiers') {
+                    designData.tiers = e.target.value;
+                } else if (e.target.id === 'theme') {
+                    designData.theme = e.target.value;
+                } else if (e.target.id === 'quantity') {
+                    designData.quantity = e.target.value;
+                } else if (e.target.id === 'deliveryType') {
+                    designData.deliveryType = e.target.value;
+                } else if (e.target.id === 'deliveryDate') {
+                    designData.deliveryDate = e.target.value;
+                } else if (e.target.id === 'deliveryTime') {
+                    designData.deliveryTime = e.target.value;
+                } else if (e.target.type === 'checkbox') {
+                    // Update arrays for checkboxes
+                    const value = e.target.value;
+                    if (['eggless', 'vegan', 'sugar-free', 'gluten-free'].includes(value)) {
+                        designData.dietary = Array.from(document.querySelectorAll('input[value="eggless"], input[value="vegan"], input[value="sugar-free"], input[value="gluten-free"]'))
+                            .filter(cb => cb.checked).map(cb => cb.value);
+                    } else if (['vanilla', 'chocolate', 'strawberry', 'red-velvet', 'carrot'].includes(value)) {
+                        designData.flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                            .filter(cb => cb.checked).map(cb => cb.value);
+                    } else if (['chocolate-ganache', 'fruit-filling', 'cream-cheese', 'caramel'].includes(value)) {
+                        designData.fillings = Array.from(document.querySelectorAll('input[value="chocolate-ganache"], input[value="fruit-filling"], input[value="cream-cheese"], input[value="caramel"]'))
+                            .filter(cb => cb.checked).map(cb => cb.value);
+                    } else if (['flowers', 'sprinkles', 'berries', 'pearls', 'candles'].includes(value)) {
+                        designData.decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
+                            .filter(cb => cb.checked).map(cb => cb.value);
+                    }
+                }
+            });
+
+            document.addEventListener('input', (e) => {
+                if (e.target.id === 'allergens') {
+                    designData.allergens = e.target.value;
+                } else if (e.target.id === 'inscription') {
+                    designData.inscription = e.target.value;
+                } else if (e.target.id === 'notes') {
+                    designData.notes = e.target.value;
+                }
             });
         });
     </script>
