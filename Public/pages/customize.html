@@ -1566,42 +1566,50 @@
             renderUploadedImages();
         }
 
+        function getSelectedItems(selectors, defaultText = 'None') {
+            return Array.from(document.querySelectorAll(selectors))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value.charAt(0).toUpperCase() + cb.value.slice(1))
+                .join(', ') || defaultText;
+        }
+
         function updatePreview() {
             const previewInfo = document.getElementById('previewInfo');
-            
-            // Get selected flavors
-            const flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
-                .filter(cb => cb.checked)
-                .map(cb => cb.value)
-                .map(f => f.charAt(0).toUpperCase() + f.slice(1))
-                .join(', ') || 'Not selected';
+            if (!previewInfo) return; // Error handling
 
-            // Get selected decorations
-            const decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
-                .filter(cb => cb.checked)
-                .map(cb => cb.value)
-                .map(d => d.charAt(0).toUpperCase() + d.slice(1))
-                .join(', ') || 'None';
+            // Cache DOM elements
+            const quantityEl = document.getElementById('quantity');
+            const quantityValueEl = document.getElementById('quantityValue');
+            const inscriptionEl = document.getElementById('inscription');
+            const charCountEl = document.getElementById('charCount');
+            const tiersEl = document.getElementById('tiers');
 
-            // Get quantity value
-            const quantity = document.getElementById('quantity').value;
-            document.getElementById('quantityValue').textContent = quantity;
+            // Get selected flavors and decorations using helper
+            const flavors = getSelectedItems('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]', 'Not selected');
+            const decorations = getSelectedItems('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]');
 
-            const inscription = document.getElementById('inscription').value;
-            document.getElementById('charCount').textContent = inscription.length;
+            // Get values with fallbacks
+            const quantity = quantityEl ? quantityEl.value : designData.quantity || 1;
+            if (quantityValueEl) quantityValueEl.textContent = quantity;
 
+            const inscription = inscriptionEl ? inscriptionEl.value : designData.inscription || '';
+            if (charCountEl) charCountEl.textContent = inscription.length;
+
+            const tiers = tiersEl ? tiersEl.value : designData.tiers || '1';
+
+            // Build preview HTML with error handling for displayNames
             previewInfo.innerHTML = `
                 <div class="preview-item">
                     <span class="preview-item-label">Shape:</span>
-                    <span class="preview-item-value">${displayNames.shapes[designData.shape]}</span>
+                    <span class="preview-item-value">${displayNames.shapes[designData.shape] || designData.shape || 'Unknown'}</span>
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Size:</span>
-                    <span class="preview-item-value">${displayNames.sizes[designData.size]}</span>
+                    <span class="preview-item-value">${displayNames.sizes[designData.size] || designData.size || 'Unknown'}</span>
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Tiers: </span>
-                    <span class="preview-item-value">${document.getElementById('tiers').value}</span>
+                    <span class="preview-item-value">${tiers}</span>
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Flavors:</span>
@@ -1609,7 +1617,7 @@
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Icing:</span>
-                    <span class="preview-item-value">${displayNames.icingTypes[designData.icingType]}</span>
+                    <span class="preview-item-value">${displayNames.icingTypes[designData.icingType] || designData.icingType || 'Unknown'}</span>
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Decorations:</span>
@@ -1625,17 +1633,21 @@
                 </div>
                 <div class="preview-item">
                     <span class="preview-item-label">Images:</span>
-                    <span class="preview-item-value">${designData.images.length} uploaded</span>
+                    <span class="preview-item-value">${designData.images ? designData.images.length : 0} uploaded</span>
                 </div>
                 <div class="preview-item" style="margin-top: var(--spacing-lg); background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(47, 180, 146, 0.2) 100%);">
                     <span class="preview-item-label">Estimated Total:</span>
-                    <span class="preview-item-value" style="font-size: var(--font-size-lg);">KES <span id="totalPrice">4,000</span></span>
+                    <span class="preview-item-value" style="font-size: var(--font-size-lg);">KES <span id="totalPrice">${designData.totalPrice ? designData.totalPrice.toLocaleString() : '4,000'}</span></span>
                 </div>
             `;
 
-            // Update 3D visualization
-            if (visualizationEngine) {
-                visualizationEngine.update(designData);
+            // Update 3D visualization with error handling
+            if (visualizationEngine && typeof visualizationEngine.update === 'function') {
+                try {
+                    visualizationEngine.update(designData);
+                } catch (error) {
+                    console.error('Error updating visualization:', error);
+                }
             }
         }
 
