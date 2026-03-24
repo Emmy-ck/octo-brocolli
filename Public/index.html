@@ -14,6 +14,9 @@
     <!-- Custom Global Styling System -->
     <link rel="stylesheet" href="css/style.css">
     
+    <!-- Shared Authentication Module -->
+    <script src="js/auth.js"></script>
+    
     <style>
         /* Advanced Animations */
         @keyframes gradientShift {
@@ -677,10 +680,12 @@
                     <i class="fas fa-cake-candles" style="font-size: 1.5rem; color: var(--primary);"></i>
                     <span style="font-weight: bold;">Customatch</span>
                 </div>
-                <div class="flex gap-lg">
+                <div class="flex gap-lg" style="align-items: center;">
                     <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Features</a>
                     <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">How It Works</a>
                     <a href="#" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Reviews</a>
+                    <a href="pages/login.html" style="color: var(--text-secondary); font-size: var(--font-size-sm); text-decoration: none;">Login</a>
+                    <a href="pages/signup.html" style="color: var(--primary); font-size: var(--font-size-sm); font-weight: 600; text-decoration: none;">Sign Up</a>
                 </div>
             </div>
         </nav>
@@ -1220,6 +1225,7 @@
     <!-- GSAP -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="/js/auth.js"></script>
     
     <script>
         gsap.registerPlugin(ScrollTrigger);

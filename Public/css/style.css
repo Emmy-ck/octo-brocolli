@@ -1173,3 +1173,94 @@ canvas {
 #interactive-box:active {
     cursor: grabbing;
 }
+
+/* =============================================
+   9. AUTH PAGE STYLES
+   ============================================= */
+
+/* Auth Container - centered card layout */
+.auth-container {
+    max-width: 480px;
+    margin: 4rem auto;
+}
+
+/* Auth Heading Section */
+.auth-heading {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.auth-heading h1 {
+    margin: 0;
+}
+
+.auth-heading p {
+    color: var(--text-secondary);
+}
+
+/* Auth Card */
+.auth-card {
+    padding: var(--spacing-xl);
+}
+
+/* Auth Status Container */
+.auth-status {
+    margin-bottom: var(--spacing-lg);
+}
+
+/* Auth Form Button */
+.auth-button {
+    width: 100%;
+    margin-top: var(--spacing-md);
+}
+
+/* Auth Footer Text */
+.auth-footer {
+    margin-top: var(--spacing-lg);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.auth-footer a {
+    color: var(--primary);
+}
+
+/* Auth Error Message */
+.auth-error {
+    color: #FF6B6B;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Auth Success Message */
+.auth-success {
+    color: #2FB492;
+    margin-bottom: var(--spacing-md);
+    display: none;
+}
+
+.auth-success.show {
+    display: block;
+}
+
+/* Password Strength Indicator */
+#passwordStrength {
+    margin-top: 6px;
+    height: 4px;
+    background: #e0e0e0;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+#strengthBar {
+    height: 100%;
+    width: 0%;
+    background: #FF6B6B;
+    transition: width 0.3s, background 0.3s;
+}
+
+#strengthFeedback {
+    font-size: var(--font-size-xs);
+    color: #666;
+    margin-top: 4px;
+    min-height: 16px;
+}

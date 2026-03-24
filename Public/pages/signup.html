@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - Customatch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-heading">
+            <h1>Create your Customatch account</h1>
+            <p>Sign up and start designing your ideal cake.</p>
+        </div>
+
+        <div class="card auth-card">
+            <div id="authStatus" class="auth-status"></div>
+            <form id="signupForm">
+                <div class="form-group">
+                    <label class="form-label" for="name">Full Name</label>
+                    <input class="form-input" id="name" type="text" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input class="form-input" id="email" type="email" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input class="form-input" id="password" type="password" minlength="8" required />
+                    <div id="passwordStrength">
+                        <div id="strengthBar"></div>
+                    </div>
+                    <div id="strengthFeedback"></div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Confirm Password</label>
+                    <input class="form-input" id="confirmPassword" type="password" minlength="8" required />
+                </div>
+                <button class="btn btn-primary auth-button" type="submit">Create account</button>
+            </form>
+
+            <p class="auth-footer">Already have an account? <a href="login.html">Log in</a>.</p>
+        </div>
+    </div>
+
+    <script src="/js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAuthActions('authStatus');
+            const current = getCurrentUser();
+            if (current) {
+                navigateTo('/pages/customize.html');
+                return;
+            }
+
+            const form = document.getElementById('signupForm');
+            const passwordInput = document.getElementById('password');
+            const strengthBar = document.getElementById('strengthBar');
+            const strengthFeedback = document.getElementById('strengthFeedback');
+            
+            const errorEl = document.createElement('div');
+            errorEl.id = 'signupError';
+            errorEl.className = 'auth-error';
+            form.parentNode.insertBefore(errorEl, form);
+
+            const successEl = document.createElement('div');
+            successEl.id = 'signupSuccess';
+            successEl.className = 'auth-success';
+            form.parentNode.insertBefore(successEl, form);
+
+            // Update password strength indicator as user types
+            passwordInput.addEventListener('input', (e) => {
+                const password = e.target.value;
+                const strength = validatePasswordStrength(password);
+                
+                const colors = ['#FF6B6B', '#FFA500', '#FFD700', '#2FB492'];
+                const widths = ['10%', '40%', '70%', '100%'];
+                
+                strengthBar.style.width = widths[strength.score];
+                strengthBar.style.background = colors[strength.score];
+                strengthFeedback.textContent = strength.feedback;
+                strengthFeedback.style.color = strength.score === 0 ? '#666' : (strength.score === 1 ? '#FF6B6B' : (strength.score === 2 ? '#FFA500' : '#2FB492'));
+            });
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                errorEl.textContent = '';
+                successEl.textContent = '';
+                successEl.style.display = 'none';
+
+                const name = document.getElementById('name').value.trim();
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                // Basic client-side validation
+                if (!name) {
+                    errorEl.textContent = 'Please enter your full name.';
+                    return;
+                }
+                if (!email) {
+                    errorEl.textContent = 'Please enter your email address.';
+                    return;
+                }
+                if (!password) {
+                    errorEl.textContent = 'Please enter a password.';
+                    return;
+                }
+                if (!confirmPassword) {
+                    errorEl.textContent = 'Please confirm your password.';
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    errorEl.textContent = 'Passwords do not match.';
+                    return;
+                }
+
+                const result = registerUser({ name, email, password });
+                if (!result.success) {
+                    errorEl.textContent = result.message;
+                    return;
+                }
+
+                successEl.textContent = result.message || 'Account created successfully! Redirecting...';
+                successEl.classList.add('show');
+                document.getElementById('signupForm').style.opacity = '0.5';
+                document.getElementById('signupForm').style.pointerEvents = 'none';
+
+                setTimeout(() => {
+                    applyPostAuthRedirect('/pages/customize.html');
+                }, 1500);
+            });
+        });
+    </script>
+</body>
+</html>

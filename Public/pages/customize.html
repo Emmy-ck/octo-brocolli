@@ -7,10 +7,13 @@
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    
+
+    <!-- Shared app auth JS -->
+    <script src="/js/auth.js"></script>
+
     <!-- Three.js for 3D Visualization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     
@@ -1071,6 +1074,9 @@
                     <h3 class="preview-title">
                         <i class="fas fa-cube" style="margin-right: var(--spacing-md);"></i>3D Live Preview & Pricing
                     </h3>
+                    <div id="userPanel" style="margin-bottom: var(--spacing-md); display: flex; justify-content: space-between; align-items: center;">
+                        <!-- Filled by auth.js -->
+                    </div>
                     <div class="cake-preview" id="canvasContainer">
                         <canvas id="canvas3d"></canvas>
                         <div class="cake-icon fallback">🎂</div>
@@ -1570,6 +1576,12 @@
             themes: { classic: 'Classic & Elegant', modern: 'Modern & Minimalist', playful: 'Playful & Colorful', luxury: 'Luxury & Premium', rustic: 'Rustic & Natural' }
         };
 
+        // Enforce authentication before user can customize
+        if (!requireAuth('/pages/login.html')) {
+            document.body.innerHTML = '<p style="padding: 3rem; text-align: center; font-size: 1.25rem;">Redirecting to login...</p>';
+            throw new Error('Authentication required.');
+        }
+
         // Base prices
         const basePrices = {
             size: { '6': 3500, '8': 4000, '10': 5000, '12': 6500 },
@@ -1638,6 +1650,9 @@
         function updatePreview() {
             const previewInfo = document.getElementById('previewInfo');
             if (!previewInfo) return; // Error handling
+
+            // Render user panel (login/logout status)
+            renderAuthActions('userPanel');
 
             // Cache DOM elements
             const quantityEl = document.getElementById('quantity');
