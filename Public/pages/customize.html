@@ -528,6 +528,13 @@
             font-size: var(--font-size-sm);
         }
 
+        .preview-item.total-price {
+            border-color: #2F6A8F;
+            background: rgba(47, 108, 143, 0.12);
+            font-size: var(--font-size-md);
+            font-weight: 700;
+        }
+
         .preview-item-label {
             color: var(--text-secondary);
             font-weight: 600;
@@ -705,7 +712,8 @@
                                     <option value="1">1 Tier</option>
                                     <option value="2">2 Tiers</option>
                                     <option value="3">3 Tiers</option>
-                                    <option value="4">4+ Tiers</option>
+                                    <option value="4">4 Tiers</option>
+                                    <option value="5">5 Tiers</option>
                                 </select>
                             </div>
                             <div class="form-group">
@@ -1275,11 +1283,32 @@
                 this.renderer.setSize(width, height);
             }
 
-            createCakeTier(radius, height, color) {
+            createCakeTier(radius, height, color, shape = 'round') {
                 const group = new THREE.Group();
 
-                // Cake body (cylinder)
-                const cakeGeometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+                // Cake body
+                let cakeGeometry;
+                if (shape === 'square') {
+                    cakeGeometry = new THREE.BoxGeometry(radius * 2, height, radius * 2);
+                } else if (shape === 'rectangular') {
+                    cakeGeometry = new THREE.BoxGeometry(radius * 2.2, height, radius * 1.4);
+                } else if (shape === 'heart') {
+                    const heartShape = new THREE.Shape();
+                    const s = radius * 0.9;
+                    heartShape.moveTo(0, s * 0.25);
+                    heartShape.bezierCurveTo(s * 0.7, s * 0.75, s * 2, s * 0.35, 0, -s * 0.65);
+                    heartShape.bezierCurveTo(-s * 2, s * 0.35, -s * 0.7, s * 0.75, 0, s * 0.25);
+                    cakeGeometry = new THREE.ExtrudeGeometry(heartShape, {
+                        depth: height,
+                        bevelEnabled: true,
+                        bevelThickness: 0.03,
+                        bevelSize: 0.03,
+                        bevelSegments: 2
+                    });
+                } else {
+                    cakeGeometry = new THREE.CylinderGeometry(radius, radius, height, 32);
+                }
+
                 const cakeMaterial = new THREE.MeshStandardMaterial({
                     color: color,
                     metalness: 0.2,
@@ -1288,17 +1317,50 @@
                 const cakeMesh = new THREE.Mesh(cakeGeometry, cakeMaterial);
                 cakeMesh.castShadow = true;
                 cakeMesh.receiveShadow = true;
+
+                if (shape === 'heart') {
+                    cakeMesh.rotation.x = -Math.PI / 2;  // orient extruded shape vertically
+                    cakeMesh.position.y = height / 2;
+                }
                 group.add(cakeMesh);
 
                 // Icing top
-                const icingGeometry = new THREE.CylinderGeometry(radius + 0.05, radius + 0.05, 0.1, 32);
+                let icingGeometry;
+                if (shape === 'square') {
+                    icingGeometry = new THREE.BoxGeometry(radius * 2.05, 0.1, radius * 2.05);
+                } else if (shape === 'rectangular') {
+                    icingGeometry = new THREE.BoxGeometry(radius * 2.25, 0.1, radius * 1.45);
+                } else if (shape === 'heart') {
+                    const heartIcingShape = new THREE.Shape();
+                    const s = radius * 0.85;
+                    heartIcingShape.moveTo(0, s * 0.25);
+                    heartIcingShape.bezierCurveTo(s * 0.7, s * 0.75, s * 2, s * 0.35, 0, -s * 0.65);
+                    heartIcingShape.bezierCurveTo(-s * 2, s * 0.35, -s * 0.7, s * 0.75, 0, s * 0.25);
+                    icingGeometry = new THREE.ExtrudeGeometry(heartIcingShape, {
+                        depth: 0.1,
+                        bevelEnabled: true,
+                        bevelThickness: 0.02,
+                        bevelSize: 0.02,
+                        bevelSegments: 1
+                    });
+                } else {
+                    icingGeometry = new THREE.CylinderGeometry(radius + 0.05, radius + 0.05, 0.1, 32);
+                }
+
                 const icingMaterial = new THREE.MeshStandardMaterial({
                     color: 0xF1FAEE,
                     metalness: 0.3,
                     roughness: 0.6
                 });
                 const icingMesh = new THREE.Mesh(icingGeometry, icingMaterial);
-                icingMesh.position.y = height / 2 + 0.05;
+
+                if (shape === 'heart') {
+                    icingMesh.rotation.x = -Math.PI / 2;
+                    icingMesh.position.y = height + 0.05;
+                } else {
+                    icingMesh.position.y = height / 2 + 0.05;
+                }
+
                 icingMesh.castShadow = true;
                 icingMesh.receiveShadow = true;
                 group.add(icingMesh);
@@ -1396,7 +1458,7 @@
 
                 for (let i = 0; i < tierCount; i++) {
                     const tierRadius = baseRadius * (1 - i * 0.15);
-                    const tier = this.createCakeTier(tierRadius, tierHeight, icingColorValue);
+                    const tier = this.createCakeTier(tierRadius, tierHeight, icingColorValue, shape);
                     tier.position.y = currentY;
                     
                     // Add decorations
@@ -1597,6 +1659,25 @@
 
             const tiers = tiersEl ? tiersEl.value : designData.tiers || '1';
 
+            // Sync design model with current input values
+            designData.size = document.getElementById('size')?.value || designData.size;
+            designData.tiers = tiers;
+            designData.quantity = parseInt(quantity, 10) || 1;
+            designData.inscription = inscription;
+            designData.icingType = document.getElementById('icingType')?.value || designData.icingType;
+            designData.theme = document.getElementById('theme')?.value || designData.theme;
+
+            designData.flavors = Array.from(document.querySelectorAll('input[value="vanilla"], input[value="chocolate"], input[value="strawberry"], input[value="red-velvet"], input[value="carrot"]'))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            designData.decorations = Array.from(document.querySelectorAll('input[value="flowers"], input[value="sprinkles"], input[value="berries"], input[value="pearls"], input[value="candles"]'))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+
+            // Calculate the updated price before showing preview summary
+            calculatePrice();
+
             // Build preview HTML with error handling for displayNames
             previewInfo.innerHTML = `
                 <div class="preview-item">
@@ -1635,9 +1716,9 @@
                     <span class="preview-item-label">Images:</span>
                     <span class="preview-item-value">${designData.images ? designData.images.length : 0} uploaded</span>
                 </div>
-                <div class="preview-item" style="margin-top: var(--spacing-lg); background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(47, 180, 146, 0.2) 100%);">
+                <div class="preview-item total-price" style="margin-top: var(--spacing-lg); background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(47, 180, 146, 0.2) 100%);">
                     <span class="preview-item-label">Estimated Total:</span>
-                    <span class="preview-item-value" style="font-size: var(--font-size-lg);">KES <span id="totalPrice">${designData.totalPrice ? designData.totalPrice.toLocaleString() : '4,000'}</span></span>
+                    <span class="preview-item-value" style="font-size: var(--font-size-lg);">KES <span id="previewTotalPrice">${designData.totalPrice ? designData.totalPrice.toLocaleString() : '0'}</span></span>
                 </div>
             `;
 
@@ -1685,8 +1766,77 @@
             // Delivery time
             total += basePrices.deliveryTime[document.getElementById('deliveryTime').value] || 0;
 
-            document.getElementById('totalPrice').textContent = total.toLocaleString();
             designData.totalPrice = total;
+
+            const previewTotalEl = document.getElementById('previewTotalPrice');
+            if (previewTotalEl) {
+                previewTotalEl.textContent = total.toLocaleString();
+            }
+
+            const legacyTotalEl = document.getElementById('totalPrice');
+            if (legacyTotalEl) {
+                legacyTotalEl.textContent = total.toLocaleString();
+            }
+
+            return total;
+        }
+
+        function renderFinalReview() {
+            const breakdown = document.getElementById('finalPriceBreakdown');
+            if (breakdown) {
+                let breakdownHTML = '';
+                // Base price
+                const base = basePrices.size[designData.size] || 0;
+                breakdownHTML += `<div class="price-item"><span>Base Price (${displayNames.sizes[designData.size] || designData.size})</span><span>KES ${base.toLocaleString()}</span></div>`;
+                // Icing
+                const icing = basePrices.icingType[designData.icingType] || 0;
+                if (icing > 0) breakdownHTML += `<div class="price-item"><span>${displayNames.icingTypes[designData.icingType] || designData.icingType}</span><span>KES ${icing.toLocaleString()}</span></div>`;
+                // Theme
+                const theme = basePrices.theme[designData.theme] || 0;
+                if (theme > 0) breakdownHTML += `<div class="price-item"><span>${displayNames.themes[designData.theme] || designData.theme}</span><span>KES ${theme.toLocaleString()}</span></div>`;
+                // Fillings
+                designData.fillings.forEach(filling => {
+                    const cost = basePrices.fillings[filling] || 0;
+                    if (cost > 0) breakdownHTML += `<div class="price-item"><span>${filling.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span><span>KES ${cost.toLocaleString()}</span></div>`;
+                });
+                // Decorations
+                designData.decorations.forEach(dec => {
+                    const cost = basePrices.decorations[dec] || 0;
+                    if (cost > 0) breakdownHTML += `<div class="price-item"><span>${dec.charAt(0).toUpperCase() + dec.slice(1)}</span><span>KES ${cost.toLocaleString()}</span></div>`;
+                });
+                // Dietary
+                designData.dietary.forEach(d => {
+                    const cost = basePrices.dietary[d] || 0;
+                    if (cost > 0) breakdownHTML += `<div class="price-item"><span>${d.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase())}</span><span>KES ${cost.toLocaleString()}</span></div>`;
+                });
+                // Quantity
+                const qty = designData.quantity || 1;
+                if (qty > 1) breakdownHTML += `<div class="price-item"><span>Quantity (${qty})</span><span>x${qty}</span></div>`;
+                // Delivery
+                const delivery = basePrices.deliveryType[designData.deliveryType] || 0;
+                if (delivery > 0) breakdownHTML += `<div class="price-item"><span>Delivery</span><span>KES ${delivery.toLocaleString()}</span></div>`;
+                // Delivery time
+                const time = basePrices.deliveryTime[designData.deliveryTime] || 0;
+                if (time > 0) breakdownHTML += `<div class="price-item"><span>${(designData.deliveryTime || '').charAt(0).toUpperCase() + (designData.deliveryTime || '').slice(1)} Delivery</span><span>KES ${time.toLocaleString()}</span></div>`;
+                // Total
+                breakdownHTML += `<div class="price-item total"><span>Total</span><span>KES ${designData.totalPrice.toLocaleString()}</span></div>`;
+                breakdown.innerHTML = breakdownHTML;
+            }
+
+            const reviewContainer = document.getElementById('reviewItems');
+            if (reviewContainer) {
+                let reviewHTML = '';
+                reviewHTML += `<div><strong>Shape:</strong> ${displayNames.shapes[designData.shape] || designData.shape}</div>`;
+                reviewHTML += `<div><strong>Size:</strong> ${displayNames.sizes[designData.size] || designData.size}</div>`;
+                reviewHTML += `<div><strong>Tiers:</strong> ${designData.tiers}</div>`;
+                reviewHTML += `<div><strong>Flavors:</strong> ${designData.flavors.map(f => f.charAt(0).toUpperCase() + f.slice(1)).join(', ') || 'None'}</div>`;
+                reviewHTML += `<div><strong>Icing:</strong> ${displayNames.icingTypes[designData.icingType] || designData.icingType}</div>`;
+                reviewHTML += `<div><strong>Decorations:</strong> ${designData.decorations.map(d => d.charAt(0).toUpperCase() + d.slice(1)).join(', ') || 'None'}</div>`;
+                reviewHTML += `<div><strong>Quantity:</strong> ${designData.quantity}</div>`;
+                reviewHTML += `<div><strong>Inscription:</strong> ${designData.inscription || 'None'}</div>`;
+                reviewHTML += `<div><strong>Images:</strong> ${designData.images.length} uploaded</div>`;
+                reviewContainer.innerHTML = reviewHTML;
+            }
         }
 
         function validateDeliveryDate() {
@@ -1769,6 +1919,10 @@
             setTimeout(() => {
                 updatePreview();
                 calculatePrice();
+
+                if (currentStep === totalSteps) {
+                    renderFinalReview();
+                }
             }, 50);
 
             // Update buttons
