@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baker Dashboard - Customatch</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom Styling -->
+    <link rel="stylesheet" href="../css/style.css">
+    
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .stat-content {
+            flex: 1;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .stat-value {
+            font-size: var(--font-size-2xl);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .stat-change {
+            font-size: var(--font-size-sm);
+            color: #2FB492;
+        }
+
+        .stat-change.negative {
+            color: #FF6B6B;
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
+        .chart-section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .chart-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .orders-section {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .orders-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .filter-btn {
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            background: rgba(118, 153, 212, 0.05);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, rgba(118, 153, 212, 0.2) 0%, rgba(47, 180, 146, 0.1) 100%);
+            border-color: #7699D4;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .orders-table thead {
+            border-bottom: 2px solid rgba(118, 153, 212, 0.2);
+        }
+
+        .orders-table th {
+            text-align: left;
+            padding: var(--spacing-lg);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: var(--font-size-sm);
+        }
+
+        .orders-table td {
+            padding: var(--spacing-lg);
+            border-bottom: 1px solid rgba(118, 153, 212, 0.1);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .order-status {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-md);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #FFB84D;
+        }
+
+        .status-preparing {
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+        }
+
+        .status-ready {
+            background: rgba(47, 180, 146, 0.1);
+            color: #2FB492;
+        }
+
+        .status-delivered {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: var(--spacing-md);
+        }
+
+        .action-btn {
+            padding: var(--spacing-sm) var(--spacing-md);
+            border: 1px solid rgba(118, 153, 212, 0.3);
+            background: rgba(118, 153, 212, 0.05);
+            color: var(--primary);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: var(--font-size-xs);
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: rgba(118, 153, 212, 0.15);
+            border-color: #7699D4;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid rgba(118, 153, 212, 0.2);
+            padding: var(--spacing-xl);
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-logo {
+            font-size: var(--font-size-xl);
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: var(--spacing-3xl);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+
+        .nav-item {
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: var(--font-size-sm);
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(118, 153, 212, 0.1);
+            color: var(--primary);
+        }
+
+        .main-content {
+            margin-left: 280px;
+            padding: var(--spacing-xl);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        .header-title h1 {
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .header-title p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-lg);
+        }
+
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+            padding: var(--spacing-sm);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-base);
+        }
+
+        .notification-bell:hover {
+            background: rgba(118, 153, 212, 0.1);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .notification-badge.show {
+            display: flex;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7699D4 0%, #2FB492 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .new-orders-section {
+            background: linear-gradient(135deg, rgba(47, 180, 146, 0.1) 0%, rgba(118, 153, 212, 0.1) 100%);
+            border: 2px solid var(--success);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+            display: none;
+            animation: slideInTop var(--transition-base);
+        }
+
+        .new-orders-section.show {
+            display: block;
+        }
+
+        .new-orders-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .new-orders-title {
+            font-size: var(--font-size-lg);
+            font-weight: 600;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .new-order-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(47, 180, 146, 0.3);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+            animation: fadeIn var(--transition-base);
+            border-left: 4px solid var(--success);
+        }
+
+        .new-order-card.new {
+            animation: slideInRight var(--transition-base);
+        }
+
+        .new-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-sm);
+        }
+
+        .new-order-time {
+            color: var(--success);
+            font-size: var(--font-size-xs);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                border-right: none;
+                border-bottom: 1px solid rgba(118, 153, 212, 0.2);
+                padding: var(--spacing-lg);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: var(--spacing-lg);
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-buttons {
+                flex-wrap: wrap;
+            }
+        }
+
+        canvas {
+            max-height: 300px;
+        }
+
+        /* Order Tracking Styles */
+        .order-tracking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-lg);
+        }
+
+        .order-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(118, 153, 212, 0.2);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            transition: all var(--transition-base);
+        }
+
+        .order-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(118, 153, 212, 0.1);
+        }
+
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .order-info .order-id {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .order-info .customer-name {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .order-amount {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: var(--font-size-lg);
+        }
+
+        .order-details {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .cake-type {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .delivery-date {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+        }
+
+        .order-progress {
+            margin-bottom: var(--spacing-lg);
+        }
+
+        .progress-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--spacing-sm);
+            flex: 1;
+            position: relative;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--font-size-lg);
+            background: rgba(118, 153, 212, 0.1);
+            border: 2px solid rgba(118, 153, 212, 0.2);
+            transition: all var(--transition-base);
+        }
+
+        .step.completed .step-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step.active .step-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 15px rgba(118, 153, 212, 0.4);
+        }
+
+        .step-label {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .step.completed .step-label {
+            color: var(--success);
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .step-connector {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            right: -50%;
+            height: 2px;
+            background: rgba(118, 153, 212, 0.2);
+            z-index: 1;
+        }
+
+        .step-connector.completed {
+            background: var(--success);
+        }
+
+        .order-actions {
+            display: flex;
+            gap: var(--spacing-md);
+            justify-content: flex-end;
+        }
+
+        @media (max-width: 768px) {
+            .order-tracking-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .progress-steps {
+                flex-direction: column;
+                gap: var(--spacing-md);
+            }
+            
+            .step-connector {
+                display: none;
+            }
+            
+            .order-card-header {
+                flex-direction: column;
+                gap: var(--spacing-sm);
+                align-items: flex-start;
+            }
+            
+            .order-actions {
+                flex-direction: column;
+            }
+            
+            .order-actions {
+                flex-direction: column;
+            }
+            
+            .order-actions .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .new-orders-section {
+                margin: var(--spacing-lg) 0;
+                padding: var(--spacing-lg);
+            }
+            
+            .new-orders-header {
+                flex-direction: column;
+                gap: var(--spacing-md);
+                align-items: flex-start;
+            }
+            
+            .new-order-card {
+                padding: var(--spacing-lg);
+            }
+            
+            .new-order-time {
+                align-self: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </div>
+        <div class="sidebar-nav">
+            <div class="nav-item active" onclick="navigateTo('dashboard')">
+                <i class="fas fa-home"></i> Home
+            </div>
+            <div class="nav-item" onclick="navigateTo('orders')">
+                <i class="fas fa-shopping-bag"></i> Orders
+            </div>
+            <div class="nav-item" onclick="navigateTo('revenue')">
+                <i class="fas fa-chart-bar"></i> Revenue
+            </div>
+            <div class="nav-item" onclick="navigateTo('reviews')">
+                <i class="fas fa-star"></i> Reviews
+            </div>
+            <div class="nav-item" onclick="navigateTo('profile')">
+                <i class="fas fa-user"></i> Profile
+            </div>
+            <div class="nav-item" onclick="navigateTo('settings')">
+                <i class="fas fa-cog"></i> Settings
+            </div>
+            <hr style="border: none; border-top: 1px solid rgba(118, 153, 212, 0.1); margin: var(--spacing-lg) 0;">
+            <div class="nav-item" onclick="window.location.href='../index.html'">
+                <i class="fas fa-arrow-left"></i> Back to Main
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-title">
+                <h1>Welcome back, Sweet Dreams!</h1>
+                <p>Here's your business overview for this week</p>
+            </div>
+            <div class="user-menu">
+                <div class="notification-bell" onclick="toggleNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <div class="notification-badge" id="notificationBadge">0</div>
+                </div>
+                <div class="user-avatar">SD</div>
+            </div>
+        </div>
+
+        <!-- New Orders Section -->
+        <div class="new-orders-section" id="newOrdersSection">
+            <div class="new-orders-header">
+                <h3 class="new-orders-title">
+                    <i class="fas fa-bell"></i> New Orders
+                </h3>
+                <button class="btn btn-secondary btn-sm" onclick="dismissAllNewOrders()">
+                    <i class="fas fa-times"></i> Dismiss All
+                </button>
+            </div>
+            <div id="newOrdersContainer">
+                <!-- New orders will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Total Orders</div>
+                    <div class="stat-value">342</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i> 12% from last month
+                    </div>
+                </div>
+                <div class="stat-icon">📦</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Revenue (KES)</div>
+                    <div class="stat-value">1,197,000</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i> 18% from last month
+                    </div>
+                </div>
+                <div class="stat-icon">💰</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Avg Rating</div>
+                    <div class="stat-value">4.85 ⭐</div>
+                    <div class="stat-change">
+                        <i class="fas fa-arrow-up"></i> 94 reviews this month
+                    </div>
+                </div>
+                <div class="stat-icon">⭐</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-label">Completion Rate</div>
+                    <div class="stat-value">98.2%</div>
+                    <div class="stat-change">
+                        <i class="fas fa-check"></i> On-time delivery
+                    </div>
+                </div>
+                <div class="stat-icon">✅</div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: var(--spacing-lg); margin-bottom: var(--spacing-3xl);">
+            <!-- Revenue Chart -->
+            <div class="chart-section">
+                <div class="chart-title">
+                    <i class="fas fa-chart-line"></i> Revenue Trend
+                </div>
+                <canvas id="revenueChart"></canvas>
+            </div>
+
+            <!-- Orders Chart -->
+            <div class="chart-section">
+                <div class="chart-title">
+                    <i class="fas fa-chart-bar"></i> Orders by Type
+                </div>
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Order Tracking Section -->
+        <div class="orders-section">
+            <div class="orders-header">
+                <h3 class="orders-title">Order Tracking</h3>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterOrders('all')">All</button>
+                    <button class="filter-btn" onclick="filterOrders('pending')">Pending</button>
+                    <button class="filter-btn" onclick="filterOrders('preparing')">Preparing</button>
+                    <button class="filter-btn" onclick="filterOrders('ready')">Ready</button>
+                    <button class="filter-btn" onclick="filterOrders('delivered')">Delivered</button>
+                </div>
+            </div>
+
+            <div class="order-tracking-grid">
+                <!-- Order Card 1 -->
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div class="order-info">
+                            <div class="order-id">#ORD-2026031100001</div>
+                            <div class="customer-name">John Doe</div>
+                        </div>
+                        <div class="order-amount">KES 4,300</div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="cake-type">Round Vanilla Cake</div>
+                        <div class="delivery-date">Delivery: Mar 15, 2026</div>
+                    </div>
+                    
+                    <div class="order-progress">
+                        <div class="progress-steps">
+                            <div class="step completed">
+                                <div class="step-icon">📝</div>
+                                <div class="step-label">Ordered</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step active">
+                                <div class="step-icon">👨‍🍳</div>
+                                <div class="step-label">Preparing</div>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step">
+                                <div class="step-icon">📦</div>
+                                <div class="step-label">Ready</div>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step">
+                                <div class="step-icon">🚚</div>
+                                <div class="step-label">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <button class="btn btn-primary btn-sm" onclick="updateStatus('order1')">
+                            <i class="fas fa-arrow-right"></i> Mark Ready
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="viewDetails('order1')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Order Card 2 -->
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div class="order-info">
+                            <div class="order-id">#ORD-2026031000002</div>
+                            <div class="customer-name">Sarah Smith</div>
+                        </div>
+                        <div class="order-amount">KES 5,100</div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="cake-type">Square Chocolate Cake</div>
+                        <div class="delivery-date">Delivery: Mar 14, 2026</div>
+                    </div>
+                    
+                    <div class="order-progress">
+                        <div class="progress-steps">
+                            <div class="step completed">
+                                <div class="step-icon">📝</div>
+                                <div class="step-label">Ordered</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step completed">
+                                <div class="step-icon">👨‍🍳</div>
+                                <div class="step-label">Preparing</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step active">
+                                <div class="step-icon">📦</div>
+                                <div class="step-label">Ready</div>
+                            </div>
+                            <div class="step-connector"></div>
+                            <div class="step">
+                                <div class="step-icon">🚚</div>
+                                <div class="step-label">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <button class="btn btn-success btn-sm" onclick="updateStatus('order2')">
+                            <i class="fas fa-check"></i> Mark Delivered
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="viewDetails('order2')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Order Card 3 -->
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div class="order-info">
+                            <div class="order-id">#ORD-2026030900003</div>
+                            <div class="customer-name">Mike Johnson</div>
+                        </div>
+                        <div class="order-amount">KES 6,800</div>
+                    </div>
+                    
+                    <div class="order-details">
+                        <div class="cake-type">Heart Red Velvet Cake</div>
+                        <div class="delivery-date">Delivery: Mar 13, 2026</div>
+                    </div>
+                    
+                    <div class="order-progress">
+                        <div class="progress-steps">
+                            <div class="step completed">
+                                <div class="step-icon">📝</div>
+                                <div class="step-label">Ordered</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step completed">
+                                <div class="step-icon">👨‍🍳</div>
+                                <div class="step-label">Preparing</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step completed">
+                                <div class="step-icon">📦</div>
+                                <div class="step-label">Ready</div>
+                            </div>
+                            <div class="step-connector completed"></div>
+                            <div class="step completed">
+                                <div class="step-icon">🚚</div>
+                                <div class="step-label">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="viewDetails('order3')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script>
+        // Real-time order updates
+        let newOrdersCount = 0;
+        let orderPollingInterval;
+
+        function toggleNotifications() {
+            const section = document.getElementById('newOrdersSection');
+            section.classList.toggle('show');
+            if (!section.classList.contains('show')) {
+                // Mark all as read when closing
+                newOrdersCount = 0;
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notificationBadge');
+            if (newOrdersCount > 0) {
+                badge.textContent = newOrdersCount > 99 ? '99+' : newOrdersCount;
+                badge.classList.add('show');
+            } else {
+                badge.classList.remove('show');
+            }
+        }
+
+        function addNewOrder(order) {
+            const container = document.getElementById('newOrdersContainer');
+            const orderCard = document.createElement('div');
+            orderCard.className = 'new-order-card new';
+            orderCard.innerHTML = `
+                <div class="new-order-header">
+                    <div>
+                        <div class="order-id" style="color: var(--primary); font-weight: 600; margin-bottom: 4px;">${order.id}</div>
+                        <div style="color: var(--text-secondary); font-size: var(--font-size-sm);">${order.customer}</div>
+                    </div>
+                    <div class="new-order-time">Just now</div>
+                </div>
+                <div style="margin-bottom: var(--spacing-sm);">
+                    <div style="font-weight: 600; color: var(--text-primary);">${order.cakeType}</div>
+                    <div style="color: var(--text-secondary); font-size: var(--font-size-sm);">Delivery: ${order.deliveryDate}</div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="font-weight: 600; color: var(--text-primary);">${order.amount}</div>
+                    <div style="display: flex; gap: var(--spacing-sm);">
+                        <button class="btn btn-primary btn-sm" onclick="acceptOrder('${order.id}')">
+                            <i class="fas fa-check"></i> Accept
+                        </button>
+                        <button class="btn btn-secondary btn-sm" onclick="viewOrderDetails('${order.id}')">
+                            <i class="fas fa-eye"></i> Details
+                        </button>
+                    </div>
+                </div>
+            `;
+            container.insertBefore(orderCard, container.firstChild);
+            
+            newOrdersCount++;
+            updateNotificationBadge();
+            document.getElementById('newOrdersSection').classList.add('show');
+            
+            // Auto-hide after 30 seconds if not interacted with
+            setTimeout(() => {
+                if (orderCard.parentNode) {
+                    orderCard.style.opacity = '0.5';
+                }
+            }, 30000);
+        }
+
+        function acceptOrder(orderId) {
+            alert(`Order ${orderId} accepted! It will be added to your active orders.`);
+            removeNewOrder(orderId);
+            // In a real app, this would update the backend
+        }
+
+        function viewOrderDetails(orderId) {
+            alert(`Viewing details for ${orderId}`);
+        }
+
+        function removeNewOrder(orderId) {
+            const cards = document.querySelectorAll('.new-order-card');
+            cards.forEach(card => {
+                if (card.querySelector('.order-id').textContent === orderId) {
+                    card.remove();
+                    newOrdersCount = Math.max(0, newOrdersCount - 1);
+                    updateNotificationBadge();
+                }
+            });
+            
+            // Hide section if no orders left
+            if (newOrdersCount === 0) {
+                document.getElementById('newOrdersSection').classList.remove('show');
+            }
+        }
+
+        function dismissAllNewOrders() {
+            document.getElementById('newOrdersContainer').innerHTML = '';
+            newOrdersCount = 0;
+            updateNotificationBadge();
+            document.getElementById('newOrdersSection').classList.remove('show');
+        }
+
+        // Simulate real-time order polling
+        function startOrderPolling() {
+            // Check for new orders every 15 seconds
+            orderPollingInterval = setInterval(() => {
+                // Simulate random new orders (in real app, this would be an API call)
+                if (Math.random() < 0.3) { // 30% chance every 15 seconds
+                    const mockOrders = [
+                        {
+                            id: '#ORD-' + Date.now(),
+                            customer: 'Emma Wilson',
+                            cakeType: 'Chocolate Fudge Cake',
+                            amount: 'KES 5,200',
+                            deliveryDate: 'Mar 16, 2026'
+                        },
+                        {
+                            id: '#ORD-' + (Date.now() + 1),
+                            customer: 'David Brown',
+                            cakeType: 'Strawberry Shortcake',
+                            amount: 'KES 3,800',
+                            deliveryDate: 'Mar 17, 2026'
+                        },
+                        {
+                            id: '#ORD-' + (Date.now() + 2),
+                            customer: 'Lisa Chen',
+                            cakeType: 'Red Velvet Cupcakes (12)',
+                            amount: 'KES 2,400',
+                            deliveryDate: 'Mar 15, 2026'
+                        }
+                    ];
+                    
+                    const randomOrder = mockOrders[Math.floor(Math.random() * mockOrders.length)];
+                    addNewOrder(randomOrder);
+                }
+            }, 15000); // 15 seconds
+        }
+
+        function navigateTo(section) {
+            console.log('Navigating to:', section);
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        function filterOrders(status) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            console.log('Filtering orders by:', status);
+        }
+
+        function updateStatus(orderId) {
+            // Simple status update simulation
+            const status = prompt('Update status to: (preparing/ready/delivered)');
+            if (status) {
+                alert(`Order ${orderId} status updated to: ${status}`);
+                // In a real app, this would update the backend and refresh the UI
+            }
+        }
+
+        function viewDetails(orderId) {
+            // Mock order details
+            const details = {
+                order1: {
+                    id: '#ORD-2026031100001',
+                    customer: 'John Doe',
+                    cake: 'Round Vanilla Cake',
+                    amount: 'KES 4,300',
+                    status: 'Preparing',
+                    delivery: 'Mar 15, 2026',
+                    notes: 'Birthday cake with chocolate frosting'
+                },
+                order2: {
+                    id: '#ORD-2026031000002',
+                    customer: 'Sarah Smith',
+                    cake: 'Square Chocolate Cake',
+                    amount: 'KES 5,100',
+                    status: 'Ready',
+                    delivery: 'Mar 14, 2026',
+                    notes: 'Wedding anniversary cake'
+                },
+                order3: {
+                    id: '#ORD-2026030900003',
+                    customer: 'Mike Johnson',
+                    cake: 'Heart Red Velvet Cake',
+                    amount: 'KES 6,800',
+                    status: 'Delivered',
+                    delivery: 'Mar 13, 2026',
+                    notes: 'Valentine\'s Day special'
+                }
+            };
+            
+            const order = details[orderId];
+            if (order) {
+                alert(`Order Details:\n\n${order.id}\nCustomer: ${order.customer}\nCake: ${order.cake}\nAmount: ${order.amount}\nStatus: ${order.status}\nDelivery: ${order.delivery}\nNotes: ${order.notes}`);
+            }
+        }
+
+        // Charts
+        document.addEventListener('DOMContentLoaded', () => {
+            // Start real-time order polling
+            startOrderPolling();
+            
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Revenue (KES)',
+                        data: [180000, 190000, 165000, 195000, 200000, 220000, 240000],
+                        borderColor: '#7699D4',
+                        backgroundColor: 'rgba(118, 153, 212, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointBackgroundColor: '#7699D4',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: 'rgba(255,255,255,0.5)' }
+                        },
+                        x: {
+                            ticks: { color: 'rgba(255,255,255,0.5)' }
+                        }
+                    }
+                }
+            });
+
+            // Orders Chart
+            const ordersCtx = document.getElementById('ordersChart').getContext('2d');
+            new Chart(ordersCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vanilla', 'Chocolate', 'Strawberry', 'Red Velvet', 'Other'],
+                    datasets: [{
+                        data: [85, 65, 45, 35, 25],
+                        backgroundColor: [
+                            '#7699D4',
+                            '#2FB492',
+                            '#FF6B6B',
+                            '#FFB84D',
+                            '#9370DB'
+                        ],
+                        borderColor: 'rgba(0,0,0,0.1)',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { color: 'rgba(255,255,255,0.7)' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
