@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Shared app auth JS -->
-    <script src="/js/auth.js"></script>
+    <script src="../js/auth.js"></script>
 
     <!-- Three.js for 3D Visualization -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -711,7 +711,7 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label class="form-label">Number of Tiers</label>
-                                <select class="form-input" id="tiers" onchange="updatePreview(); validateSelection();">
+                                <select class="form-input" id="tiers" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <option value="1">1 Tier</option>
                                     <option value="2">2 Tiers</option>
                                     <option value="3">3 Tiers</option>
@@ -740,35 +740,35 @@
                             <label class="form-label">Cake Flavors (Select at least 1)</label>
                             <div style="display: flex; flex-direction: column; gap: var(--spacing-md);">
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="vanilla" onchange="updatePreview(); validateSelection();">
+                                    <input type="checkbox" value="vanilla" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <span class="checkbox-label">
                                         <strong>🍦 Vanilla</strong>
                                         <p>Classic and versatile</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="chocolate" onchange="updatePreview(); validateSelection();">
+                                    <input type="checkbox" value="chocolate" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <span class="checkbox-label">
                                         <strong>🍫 Chocolate</strong>
                                         <p>Rich and decadent</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="strawberry" onchange="updatePreview(); validateSelection();">
+                                    <input type="checkbox" value="strawberry" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <span class="checkbox-label">
                                         <strong>🍓 Strawberry</strong>
                                         <p>Fresh and fruity</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="red-velvet" onchange="updatePreview(); validateSelection();">
+                                    <input type="checkbox" value="red-velvet" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <span class="checkbox-label">
                                         <strong>🎂 Red Velvet</strong>
                                         <p>Elegant and sophisticated</p>
                                     </span>
                                 </label>
                                 <label class="checkbox-option">
-                                    <input type="checkbox" value="carrot" onchange="updatePreview(); validateSelection();">
+                                    <input type="checkbox" value="carrot" onchange="updatePreview(); calculatePrice(); validateSelection();">
                                     <span class="checkbox-label">
                                         <strong>🥕 Carrot Cake</strong>
                                         <p>Moist and spiced</p>
@@ -843,23 +843,23 @@
                             <label class="form-label">Icing Color</label>
                             <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--spacing-md);">
                                 <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: #F1FAEE; border: 3px solid #7699D4; border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('white'); updatePreview();"></div>
+                                    <div style="width: 50px; height: 50px; background: #F1FAEE; border: 3px solid #7699D4; border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('white');"></div>
                                     <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">White</span>
                                 </div>
                                 <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: #E89B9B; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('pink'); updatePreview();"></div>
+                                    <div style="width: 50px; height: 50px; background: #E89B9B; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('pink');"></div>
                                     <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Pink</span>
                                 </div>
                                 <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: #8B4513; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('brown'); updatePreview();"></div>
+                                    <div style="width: 50px; height: 50px; background: #8B4513; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('brown');"></div>
                                     <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Brown</span>
                                 </div>
                                 <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: #7699D4; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('blue'); updatePreview();"></div>
+                                    <div style="width: 50px; height: 50px; background: #7699D4; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('blue');"></div>
                                     <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Blue</span>
                                 </div>
                                 <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: #2FB492; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('green'); updatePreview();"></div>
+                                    <div style="width: 50px; height: 50px; background: #2FB492; border: 2px solid rgba(118, 153, 212, 0.3); border-radius: var(--radius-lg); margin: 0 auto var(--spacing-sm); cursor: pointer;" onclick="selectColor('green');"></div>
                                     <span style="font-size: var(--font-size-xs); color: var(--text-secondary);">Green</span>
                                 </div>
                             </div>
@@ -1092,7 +1092,10 @@
                         </div>
                     </div>
                     <div class="preview-info" id="previewInfo">
-                        <!-- Generated by JavaScript -->
+                        <div class="price-display" id="priceDisplay">Total Price: KES 0</div>
+                        <div style="color: var(--text-secondary); font-size: var(--font-size-sm); margin-top: var(--spacing-xs);">
+                            Price updates as you customize your cake
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1544,6 +1547,11 @@
         let currentStep = 1;
         const totalSteps = 8;
         let visualizationEngine = null;
+        let visualizationReady = false;
+        let lastVisualizationState = null;
+        let visualizationUpdateTimeout = null;
+        let visualizationStatus = 'initializing'; // initializing, ready, error, updating
+        const VISUALIZATION_DEBOUNCE_MS = 300;
 
         // Design data
         const designData = {
@@ -1577,7 +1585,7 @@
         };
 
         // Enforce authentication before user can customize
-        if (!requireAuth('/pages/login.html')) {
+        if (!requireAuth('login.html')) {
             document.body.innerHTML = '<p style="padding: 3rem; text-align: center; font-size: 1.25rem;">Redirecting to login...</p>';
             throw new Error('Authentication required.');
         }
@@ -1585,7 +1593,7 @@
         // Base prices
         const basePrices = {
             size: { '6': 3500, '8': 4000, '10': 5000, '12': 6500 },
-            icingType: { buttercream: 0, fondant: 500, 'cream-cheese': 300, ganache: 400 },
+            icingType: { buttercream: 200, foindant: 500, 'cream-cheese': 300, ganache: 400 },
             theme: { classic: 0, modern: 200, playful: 300, luxury: 1000, rustic: 150 },
             fillings: { 'chocolate-ganache': 200, 'fruit-filling': 300, 'cream-cheese': 250, 'caramel': 200 },
             decorations: { flowers: 300, sprinkles: 100, berries: 400, pearls: 250, candles: 50 },
@@ -1606,6 +1614,7 @@
         function selectColor(color) {
             designData.icingColor = color;
             updatePreview();
+            calculatePrice();
         }
 
         function handleImageUpload(e) {
@@ -1645,6 +1654,108 @@
                 .filter(cb => cb.checked)
                 .map(cb => cb.value.charAt(0).toUpperCase() + cb.value.slice(1))
                 .join(', ') || defaultText;
+        }
+
+        function updateVisualization() {
+            if (!visualizationReady) return;
+            
+            // Clear pending update to implement debouncing
+            if (visualizationUpdateTimeout) {
+                clearTimeout(visualizationUpdateTimeout);
+            }
+            
+            // Debounce visualization updates to prevent excessive renders
+            visualizationUpdateTimeout = setTimeout(() => {
+                try {
+                    // Check if designData has actually changed
+                    const currentState = JSON.stringify(designData);
+                    if (lastVisualizationState === currentState) return;
+                    
+                    lastVisualizationState = currentState;
+                    
+                    // Update status indicator
+                    updateVisualizationStatus('updating');
+                    
+                    // Safe visualization update with error handling
+                    if (visualizationEngine && typeof visualizationEngine.update === 'function') {
+                        visualizationEngine.update(designData);
+                        updateVisualizationStatus('ready');
+                        console.log('Visualization updated successfully', { step: currentStep, designState: designData });
+                    } else {
+                        throw new Error('Visualization engine update method not available');
+                    }
+                } catch (error) {
+                    console.error('Visualization update error:', error);
+                    updateVisualizationStatus('error');
+                    showVisualizationFallback();
+                }
+            }, VISUALIZATION_DEBOUNCE_MS);
+        }
+        
+        function updateVisualizationStatus(status) {
+            visualizationStatus = status;
+            const statusEl = document.getElementById('visualizationStatus');
+            
+            if (statusEl) {
+                statusEl.setAttribute('data-status', status);
+                
+                switch (status) {
+                    case 'ready':
+                        statusEl.innerHTML = '<i class="fas fa-check-circle" style="color: #2fb496;"></i>';
+                        statusEl.title = 'Preview updated';
+                        break;
+                    case 'updating':
+                        statusEl.innerHTML = '<i class="fas fa-spinner fa-spin" style="color: #7699d4;"></i>';
+                        statusEl.title = 'Updating preview...';
+                        break;
+                    case 'error':
+                        statusEl.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #d97706;"></i>';
+                        statusEl.title = 'Preview unavailable - showing fallback';
+                        statusEl.style.display = 'block';
+                        break;
+                    case 'initializing':
+                        statusEl.innerHTML = '<i class="fas fa-hourglass-half" style="color: #7699d4;"></i>';
+                        statusEl.title = 'Loading preview...';
+                        break;
+                }
+            }
+        }
+
+        function showVisualizationFallback() {
+            const canvas = document.getElementById('canvas3d');
+            if (canvas) {
+                canvas.style.display = 'none';
+                const cakeIcon = document.querySelector('.cake-icon');
+                const fallbackMsg = document.getElementById('visualizationFallback');
+                
+                if (cakeIcon) {
+                    cakeIcon.classList.add('fallback');
+                    cakeIcon.style.display = 'flex';
+                }
+                
+                if (fallbackMsg) {
+                    fallbackMsg.style.display = 'block';
+                }
+                
+                visualizationReady = false;
+                
+                // User-friendly console message
+                console.warn('Visualization preview unavailable. Your customization is still being processed normally. All form data is being saved correctly.');
+            }
+        }
+        
+        function hideVisualizationFallback() {
+            const cakeIcon = document.querySelector('.cake-icon');
+            const fallbackMsg = document.getElementById('visualizationFallback');
+            
+            if (cakeIcon) {
+                cakeIcon.classList.remove('fallback');
+                cakeIcon.style.display = 'none';
+            }
+            
+            if (fallbackMsg) {
+                fallbackMsg.style.display = 'none';
+            }
         }
 
         function updatePreview() {
@@ -1693,6 +1804,9 @@
             // Calculate the updated price before showing preview summary
             calculatePrice();
 
+            // Update 3D visualization with error handling
+            updateVisualization();
+
             // Build preview HTML with error handling for displayNames
             previewInfo.innerHTML = `
                 <div class="preview-item">
@@ -1737,14 +1851,7 @@
                 </div>
             `;
 
-            // Update 3D visualization with error handling
-            if (visualizationEngine && typeof visualizationEngine.update === 'function') {
-                try {
-                    visualizationEngine.update(designData);
-                } catch (error) {
-                    console.error('Error updating visualization:', error);
-                }
-            }
+
         }
 
         function calculatePrice() {
@@ -1891,12 +1998,13 @@
             if (!validateSelection()) return;
 
             if (currentStep < totalSteps) {
+                console.log(`Moving forward to step ${currentStep + 1}`);
                 goToStep(currentStep + 1);
             } else if (currentStep === totalSteps) {
                 // Collect all form data
                 captureCurrentStepData();
 
-                console.log('Design submitted:', designData);
+                console.log('%c✓ Design Customization Complete', 'color: #2fb496; font-weight: bold;', designData);
                 sessionStorage.setItem('designData', JSON.stringify(designData));
                 window.location.href = 'providers.html';
             }
@@ -1904,6 +2012,7 @@
 
         function previousStep() {
             if (currentStep > 1) {
+                console.log(`Moving backward to step ${currentStep - 1}`);
                 goToStep(currentStep - 1);
             }
         }
@@ -1934,6 +2043,7 @@
             setTimeout(() => {
                 updatePreview();
                 calculatePrice();
+                console.log(`Step ${currentStep}: Preview updated`);
 
                 if (currentStep === totalSteps) {
                     renderFinalReview();
@@ -1950,6 +2060,8 @@
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            console.log(`Navigated to step ${step} of ${totalSteps}`);
         }
 
         function captureCurrentStepData() {
@@ -2101,27 +2213,69 @@
             if (currentStep === 7) {
                 renderUploadedImages();
             }
+            
+            console.log(`Synchronized form fields for step ${currentStep}`);
         }
 
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize 3D visualization engine
+            // Initialize 3D visualization engine with comprehensive error handling
             const canvas = document.getElementById('canvas3d');
+            const cakeIcon = document.querySelector('.cake-icon');
+            
             if (canvas) {
                 try {
+                    updateVisualizationStatus('initializing');
                     visualizationEngine = new CakeVisualizationEngine(canvas);
-                    visualizationEngine.update(designData);
+                    
+                    // Validate engine initialization
+                    if (visualizationEngine && typeof visualizationEngine.update === 'function') {
+                        visualizationEngine.update(designData);
+                        visualizationReady = true;
+                        lastVisualizationState = JSON.stringify(designData);
+                        updateVisualizationStatus('ready');
+                        
+                        // Ensure canvas is visible and fallback is hidden
+                        canvas.style.display = 'block';
+                        hideVisualizationFallback();
+                        
+                        console.log('%c✓ 3D Visualization Engine Ready', 'color: #2fb496; font-weight: bold;');
+                    } else {
+                        throw new Error('Visualization engine not properly initialized');
+                    }
                 } catch (error) {
-                    console.error('Failed to initialize 3D visualization:', error);
-                    // Fallback: show emoji cake
-                    document.querySelector('.cake-icon').classList.add('fallback');
+                    console.error('%c✗ Visualization Engine Error:', 'color: #d97706; font-weight: bold;', error.message);
+                    visualizationReady = false;
+                    updateVisualizationStatus('error');
+                    showVisualizationFallback();
                 }
             } else {
-                console.error('Canvas element not found');
+                console.warn('%c⚠ Canvas element not found - using fallback preview', 'color: #f59e0b; font-weight: bold;');
+                visualizationReady = false;
+                updateVisualizationStatus('error');
+                if (cakeIcon) {
+                    cakeIcon.classList.add('fallback');
+                    cakeIcon.style.display = 'flex';
+                }
+                const fallbackMsg = document.getElementById('visualizationFallback');
+                if (fallbackMsg) fallbackMsg.style.display = 'block';
             }
 
+            // Initialize preview and price with visualization update
             updatePreview();
             calculatePrice();
+            
+            // Ensure visualization is properly initialized before first update
+            setTimeout(() => {
+                updateVisualization();
+            }, 100);
+            
+            // Log initialization completion
+            console.log('Cake Customization form initialized', { 
+                visualizationReady, 
+                currentStep, 
+                totalSteps 
+            });
             
             // Set minimum delivery date to tomorrow
             const tomorrow = new Date();
@@ -2153,6 +2307,8 @@
                     designData.deliveryDate = e.target.value;
                 } else if (e.target.id === 'deliveryTime') {
                     designData.deliveryTime = e.target.value;
+                } else if (e.target.id === 'icingType') {
+                    designData.icingType = e.target.value;
                 } else if (e.target.type === 'checkbox') {
                     // Update arrays for checkboxes
                     const value = e.target.value;
@@ -2170,6 +2326,15 @@
                             .filter(cb => cb.checked).map(cb => cb.value);
                     }
                 }
+                
+                // Update preview and price dynamically on any change
+                updatePreview();
+                calculatePrice();
+                
+                // Log user input for debugging
+                if (e.target.id) {
+                    console.log(`User input: ${e.target.id} = ${e.target.value}`);
+                }
             });
 
             document.addEventListener('input', (e) => {
@@ -2177,10 +2342,23 @@
                     designData.allergens = e.target.value;
                 } else if (e.target.id === 'inscription') {
                     designData.inscription = e.target.value;
+                    document.getElementById('charCount').textContent = e.target.value.length;
                 } else if (e.target.id === 'notes') {
                     designData.notes = e.target.value;
                 }
+                
+                // Update preview and price dynamically on input
+                updatePreview();
+                calculatePrice();
+                
+                // Log text input for debugging
+                if (e.target.id) {
+                    console.log(`User text input: ${e.target.id} (${e.target.value.length} chars)`);
+                }
             });
+            
+            // Monitor step navigation for logging
+            console.log('%c🎂 Cake Customization Started', 'color: #7699d4; font-size: 16px; font-weight: bold;');
         });
     </script>
 </body>

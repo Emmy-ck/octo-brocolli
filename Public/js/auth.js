@@ -366,10 +366,12 @@ function getCurrentUser() {
 // Session & Navigation Utilities
 // ============================================
 
-function requireAuth(redirect = '/pages/login.html') {
+function requireAuth(redirect = null) {
     const user = getCurrentUser();
     if (!user) {
-        window.location.href = redirect;
+        // Use provided redirect or determine context-aware default
+        const redirectPath = redirect || (window.location.pathname.includes('/pages/') ? 'login.html' : '/pages/login.html');
+        window.location.href = redirectPath;
         return false;
     }
     return true;
@@ -378,6 +380,11 @@ function requireAuth(redirect = '/pages/login.html') {
 function renderAuthActions(targetId) {
     const container = document.getElementById(targetId);
     if (!container) return;
+
+    // Determine context-aware paths
+    const isInPages = window.location.pathname.includes('/pages/');
+    const loginPath = isInPages ? 'login.html' : '/pages/login.html';
+    const signupPath = isInPages ? 'signup.html' : '/pages/signup.html';
 
     const user = getCurrentUser();
     if (user) {
@@ -392,10 +399,10 @@ function renderAuthActions(targetId) {
         `;
     } else {
         container.innerHTML = `
-            <a class="btn btn-secondary" href="/pages/login.html" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">
+            <a class="btn btn-secondary" href="${loginPath}" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm);">
                 <i class="fas fa-sign-in-alt" style="margin-right: 0.5rem;"></i>Login
             </a>
-            <a class="btn btn-primary" href="/pages/signup.html" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm); margin-left: var(--spacing-sm);">
+            <a class="btn btn-primary" href="${signupPath}" style="padding: 0.5rem 1rem; font-size: var(--font-size-sm); margin-left: var(--spacing-sm);">
                 <i class="fas fa-user-plus" style="margin-right: 0.5rem;"></i>Sign Up
             </a>
         `;
@@ -409,21 +416,25 @@ function navigateTo(path) {
     
     if (isProtected && !getCurrentUser()) {
         localStorage.setItem('postAuthRedirect', path);
-        window.location.href = '/pages/login.html';
+        // Determine context-aware login path
+        const loginPath = window.location.pathname.includes('/pages/') ? 'login.html' : '/pages/login.html';
+        window.location.href = loginPath;
         return;
     }
     
     window.location.href = path;
 }
 
-function applyPostAuthRedirect(defaultPath = '/pages/customize.html') {
+function applyPostAuthRedirect(defaultPath = null) {
     const redirect = localStorage.getItem('postAuthRedirect');
     if (redirect) {
         localStorage.removeItem('postAuthRedirect');
         window.location.href = redirect;
         return true;
     }
-    window.location.href = defaultPath;
+    // Use provided default or determine context-aware default (redirects to index.html)
+    const finalPath = defaultPath || (window.location.pathname.includes('/pages/') ? '../index.html' : '/index.html');
+    window.location.href = finalPath;
     return false;
 }
 
