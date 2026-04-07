@@ -5,41 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Find Providers - Customatch</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <!-- Custom Styling -->
-    <link rel="stylesheet" href="../css/style.css">
+    <!-- Custom Global Styling -->
+    <link rel="stylesheet" href="../../css/style.css">
     
     <style>
+        /* Providers Grid Layout */
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+            gap: var(--spacing-xl);
+            margin-bottom: var(--spacing-3xl);
+        }
+
+        /* Provider Card Styling */
         .provider-card {
             background: var(--bg-secondary);
-            border: 1px solid rgba(118, 153, 212, 0.2);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-xl);
             padding: var(--spacing-xl);
-            transition: all 0.3s ease;
-            cursor: pointer;
+            transition: all var(--transition-base);
+            display: flex;
+            flex-direction: column;
         }
 
         .provider-card:hover {
-            border-color: #7699D4;
-            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.2);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.3);
             transform: translateY(-5px);
         }
 
+        /* Provider Header */
         .provider-header {
             display: flex;
-            justify-content: space-between;
-            align-items: start;
+            gap: var(--spacing-lg);
             margin-bottom: var(--spacing-lg);
+            align-items: flex-start;
         }
 
         .provider-avatar {
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             border-radius: 50%;
             background: linear-gradient(135deg, #7699D4 0%, #2FB492 100%);
             display: flex;
@@ -48,6 +56,7 @@
             font-size: 2rem;
             color: white;
             flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(118, 153, 212, 0.2);
         }
 
         .provider-info {
@@ -56,7 +65,7 @@
 
         .provider-name {
             font-size: var(--font-size-lg);
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: var(--spacing-xs);
         }
@@ -64,24 +73,8 @@
         .provider-title {
             color: var(--primary);
             font-size: var(--font-size-sm);
+            font-weight: 600;
             margin-bottom: var(--spacing-sm);
-        }
-
-        .provider-rating {
-            display: flex;
-            align-items: center;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .stars {
-            color: #FFD700;
-            font-size: var(--font-size-sm);
-        }
-
-        .rating-text {
-            color: var(--text-secondary);
-            font-size: var(--font-size-xs);
         }
 
         .provider-location {
@@ -92,14 +85,43 @@
             font-size: var(--font-size-sm);
         }
 
+        /* Rating Section */
+        .provider-rating {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+            padding: var(--spacing-lg) 0;
+            border-top: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .stars {
+            color: #FFD700;
+            font-size: var(--font-size-sm);
+        }
+
+        .rating-info {
+            flex: 1;
+        }
+
+        .rating-value {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+        }
+
+        .rating-count {
+            color: var(--text-tertiary);
+            font-size: var(--font-size-xs);
+        }
+
+        /* Stats Section */
         .provider-stats {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--spacing-lg);
-            margin: var(--spacing-lg) 0;
-            padding: var(--spacing-lg) 0;
-            border-top: 1px solid rgba(118, 153, 212, 0.1);
-            border-bottom: 1px solid rgba(118, 153, 212, 0.1);
+            margin-bottom: var(--spacing-lg);
         }
 
         .stat-item {
@@ -107,74 +129,95 @@
         }
 
         .stat-value {
-            font-size: var(--font-size-lg);
-            font-weight: 600;
+            font-size: var(--font-size-xl);
+            font-weight: 700;
             color: var(--primary);
+            display: block;
         }
 
         .stat-label {
             font-size: var(--font-size-xs);
             color: var(--text-tertiary);
             margin-top: var(--spacing-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
+        /* Features Section */
         .provider-features {
             display: flex;
             flex-wrap: wrap;
-            gap: var(--spacing-md);
-            margin: var(--spacing-lg) 0;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
         }
 
         .feature-tag {
-            background: rgba(118, 153, 212, 0.1);
-            border: 1px solid rgba(118, 153, 212, 0.2);
+            background: rgba(118, 153, 212, 0.12);
+            border: 1px solid rgba(118, 153, 212, 0.25);
             color: var(--primary);
             padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-lg);
             font-size: var(--font-size-xs);
             font-weight: 600;
+            white-space: nowrap;
         }
 
+        /* Action Buttons */
         .provider-actions {
             display: flex;
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-lg);
+            gap: var(--spacing-md);
+            margin-top: auto;
         }
 
         .action-btn {
             flex: 1;
-            padding: var(--spacing-lg);
+            padding: var(--spacing-md) var(--spacing-lg);
             border-radius: var(--radius-lg);
-            border: 1px solid rgba(118, 153, 212, 0.3);
-            background: rgba(118, 153, 212, 0.05);
-            color: var(--primary);
+            border: 2px solid transparent;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .action-btn:hover {
-            background: rgba(118, 153, 212, 0.15);
-            border-color: #7699D4;
+            transition: all var(--transition-base);
+            font-size: var(--font-size-sm);
+            text-align: center;
+            text-decoration: none;
         }
 
         .action-btn.primary {
             background: linear-gradient(135deg, #7699D4 0%, #005377 100%);
-            border: none;
             color: white;
+            border-color: var(--primary);
         }
 
         .action-btn.primary:hover {
-            box-shadow: 0 10px 30px rgba(118, 153, 212, 0.3);
+            box-shadow: 0 8px 20px rgba(118, 153, 212, 0.35);
             transform: translateY(-2px);
         }
 
+        .action-btn.secondary {
+            background: transparent;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .action-btn.secondary:hover {
+            background: rgba(118, 153, 212, 0.1);
+            box-shadow: 0 4px 12px rgba(118, 153, 212, 0.2);
+        }
+
+        /* Filters Section */
         .filters-section {
             background: var(--bg-secondary);
-            border: 1px solid rgba(118, 153, 212, 0.2);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-xl);
             padding: var(--spacing-xl);
             margin-bottom: var(--spacing-3xl);
+        }
+
+        .filters-section h3 {
+            margin-top: 0;
+            margin-bottom: var(--spacing-xl);
+            color: var(--text-primary);
+            font-size: var(--font-size-xl);
         }
 
         .filter-group {
@@ -192,17 +235,19 @@
         .filter-input {
             width: 100%;
             padding: var(--spacing-md) var(--spacing-lg);
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(118, 153, 212, 0.3);
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
             border-radius: var(--radius-lg);
             color: var(--text-primary);
             font-size: var(--font-size-sm);
+            transition: all var(--transition-base);
         }
 
         .filter-input:focus {
             outline: none;
-            border-color: #7699D4;
-            background: rgba(118, 153, 212, 0.1);
+            border-color: var(--primary);
+            background: rgba(118, 153, 212, 0.08);
+            box-shadow: 0 0 0 3px rgba(118, 153, 212, 0.1);
         }
 
         .price-range {
@@ -213,14 +258,54 @@
 
         .price-range input {
             flex: 1;
+            margin-bottom: 0;
         }
 
-        .providers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: var(--spacing-xl);
+        .price-range span {
+            color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
+        /* Sort Controls */
+        .sort-controls {
+            display: flex;
+            gap: var(--spacing-lg);
+            margin-bottom: var(--spacing-xl);
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .results-count {
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
+        .sort-select {
+            padding: var(--spacing-md) var(--spacing-lg);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            transition: all var(--transition-base);
+        }
+
+        .sort-select:hover {
+            border-color: var(--primary);
+            background: rgba(118, 153, 212, 0.08);
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(118, 153, 212, 0.1);
+        }
+
+        /* No Results State */
         .no-results {
             text-align: center;
             padding: var(--spacing-3xl);
@@ -228,31 +313,21 @@
         }
 
         .no-results-icon {
-            font-size: 3rem;
+            font-size: 4rem;
             margin-bottom: var(--spacing-lg);
-            opacity: 0.5;
+            opacity: 0.4;
         }
 
-        .sort-controls {
-            display: flex;
-            gap: var(--spacing-lg);
-            margin-bottom: var(--spacing-xl);
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sort-select {
-            padding: var(--spacing-md) var(--spacing-lg);
-            background: rgba(118, 153, 212, 0.1);
-            border: 1px solid rgba(118, 153, 212, 0.3);
-            border-radius: var(--radius-lg);
+        .no-results h3 {
             color: var(--text-primary);
-            cursor: pointer;
+            margin-bottom: var(--spacing-md);
         }
 
-        .results-count {
-            color: var(--text-secondary);
-            font-size: var(--font-size-sm);
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .providers-grid {
+                grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            }
         }
 
         @media (max-width: 768px) {
@@ -260,8 +335,25 @@
                 grid-template-columns: 1fr;
             }
 
-            .filter-section {
+            .sort-controls {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .filters-section {
                 display: none;
+            }
+
+            .provider-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+            }
+
+            .provider-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -271,12 +363,12 @@
     <header class="p-xl border-bottom">
         <div class="container flex-between">
             <div style="display: flex; align-items: center; gap: var(--spacing-md);">
-                <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
-                    <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
+                <a href="../../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                    <i class="fas fa-arrow-left" style="color: var(--primary); font-size: 1.2rem;"></i>
                 </a>
                 <div>
-                    <h1 style="margin: 0;">Find Your Baker</h1>
-                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Discover local bakers matching your requirements</p>
+                    <h1 style="margin: 0; font-size: var(--font-size-3xl);">Find Your Baker</h1>
+                    <p class="text-secondary" style="font-size: var(--font-size-sm); margin-top: var(--spacing-xs); margin: 0;">Discover premium bakers matching your custom cake design</p>
                 </div>
             </div>
         </div>
@@ -285,16 +377,14 @@
     <main class="container py-3xl">
         <!-- Filters Section -->
         <div class="filters-section">
-            <h3 style="margin-top: 0; margin-bottom: var(--spacing-xl);">
-                <i class="fas fa-filter" style="margin-right: var(--spacing-md);"></i>Filter Providers
-            </h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+            <h3><i class="fas fa-filter" style="margin-right: var(--spacing-md); color: var(--primary);"></i>Filter Providers</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);">
                 <div class="filter-group">
                     <label class="filter-label">Search by name or location</label>
-                    <input type="text" class="filter-input" id="searchInput" placeholder="Search..." oninput="filterProviders()">
+                    <input type="text" class="filter-input" id="searchInput" placeholder="Search providers..." oninput="filterProviders()">
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Rating</label>
+                    <label class="filter-label">Minimum Rating</label>
                     <select class="filter-input" id="ratingFilter" onchange="filterProviders()">
                         <option value="">All ratings</option>
                         <option value="5">⭐ 5 Stars</option>
@@ -306,35 +396,35 @@
                     <label class="filter-label">Price Range (KES)</label>
                     <div class="price-range">
                         <input type="number" class="filter-input" id="minPrice" placeholder="Min" oninput="filterProviders()">
-                        <span>-</span>
+                        <span>—</span>
                         <input type="number" class="filter-input" id="maxPrice" placeholder="Max" oninput="filterProviders()">
                     </div>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Delivery Days</label>
+                    <label class="filter-label">Delivery Timeframe</label>
                     <select class="filter-input" id="deliveryFilter" onchange="filterProviders()">
-                        <option value="">Any</option>
-                        <option value="same">Same day</option>
-                        <option value="next">Next day</option>
+                        <option value="">Any timeframe</option>
+                        <option value="same">Same day delivery</option>
+                        <option value="next">Next day delivery</option>
                         <option value="week">This week</option>
                     </select>
                 </div>
             </div>
         </div>
 
-        <!-- Sort Controls -->
+        <!-- Sort and Results Info -->
         <div class="sort-controls">
             <div class="results-count">
-                Showing <span id="resultCount">12</span> providers
+                Showing <span id="resultCount">0</span> providers
             </div>
-            <div>
-                <label style="margin-right: var(--spacing-md); color: var(--text-secondary); font-size: var(--font-size-sm);">Sort by:</label>
+            <div style="display: flex; align-items: center; gap: var(--spacing-md);">
+                <label style="color: var(--text-secondary); font-size: var(--font-size-sm); font-weight: 500;">Sort by:</label>
                 <select class="sort-select" id="sortSelect" onchange="sortProviders()">
                     <option value="rating">Highest Rating</option>
                     <option value="price-low">Price: Low to High</option>
                     <option value="price-high">Price: High to Low</option>
                     <option value="reviews">Most Reviews</option>
-                    <option value="distance">Nearest</option>
+                    <option value="distance">Nearest Location</option>
                 </select>
             </div>
         </div>
@@ -344,16 +434,17 @@
             <!-- Populated by JavaScript -->
         </div>
 
+        <!-- No Results State -->
         <div id="noResults" class="no-results" style="display: none;">
             <div class="no-results-icon">🔍</div>
             <h3>No providers found</h3>
-            <p>Try adjusting your filters to see more results</p>
+            <p>Try adjusting your filters or search criteria to find more bakers</p>
         </div>
     </main>
 
     <!-- Footer -->
     <footer class="border-top py-lg text-center text-tertiary">
-        <p>&copy; 2026 Customatch. Connecting you with local bakers.</p>
+        <p>&copy; 2026 Customatch. Connecting you with talented local bakers.</p>
     </footer>
 
     <script>
@@ -549,48 +640,46 @@
             grid.innerHTML = list.map(provider => `
                 <div class="provider-card">
                     <div class="provider-header">
-                        <div style="display: flex; gap: var(--spacing-lg);">
-                            <div class="provider-avatar">${provider.avatar}</div>
-                            <div class="provider-info">
-                                <div class="provider-name">${provider.name}</div>
-                                <div class="provider-title">${provider.title}</div>
-                                <div class="provider-rating">
-                                    <span class="stars">${'★'.repeat(Math.floor(provider.rating))}${'☆'.repeat(5 - Math.floor(provider.rating))}</span>
-                                    <span class="rating-text">${provider.rating} (${provider.reviews})</span>
-                                </div>
-                                <div class="provider-location">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    ${provider.location}
-                                </div>
+                        <div class="provider-avatar">${provider.avatar}</div>
+                        <div class="provider-info">
+                            <div class="provider-name">${provider.name}</div>
+                            <div class="provider-title">${provider.title}</div>
+                            <div class="provider-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${provider.location}</span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="provider-rating">
+                        <div class="stars">${'★'.repeat(Math.floor(provider.rating))}${'☆'.repeat(5 - Math.floor(provider.rating))}</div>
+                        <div class="rating-info">
+                            <div class="rating-value">${provider.rating} out of 5</div>
+                            <div class="rating-count">${provider.reviews} reviews</div>
                         </div>
                     </div>
 
                     <div class="provider-stats">
                         <div class="stat-item">
-                            <div class="stat-value">KES ${provider.basePrice.toLocaleString()}</div>
-                            <div class="stat-label">Starting Price</div>
+                            <span class="stat-value">KES ${provider.basePrice.toLocaleString()}</span>
+                            <div class="stat-label">Base Price</div>
                         </div>
                         <div class="stat-item">
-                            <div class="stat-value">${provider.orders}</div>
+                            <span class="stat-value">${provider.orders}</span>
                             <div class="stat-label">Orders</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${provider.distance}</div>
-                            <div class="stat-label">Distance</div>
                         </div>
                     </div>
 
                     <div class="provider-features">
-                        ${provider.features.map(f => `<div class="feature-tag">${f}</div>`).join('')}
+                        ${provider.features.map(f => `<div class="feature-tag"><i class="fas fa-check-circle" style="margin-right: 4px;"></i>${f}</div>`).join('')}
                     </div>
 
                     <div class="provider-actions">
-                        <button class="action-btn" onclick="viewProfile(${provider.id})">
-                            <i class="fas fa-eye"></i> View Profile
+                        <button class="action-btn secondary" onclick="viewProfile(${provider.id})">
+                            <i class="fas fa-info-circle"></i> Info
                         </button>
                         <button class="action-btn primary" onclick="selectProvider(${provider.id})">
-                            <i class="fas fa-check"></i> Select
+                            <i class="fas fa-check-circle"></i> Select
                         </button>
                     </div>
                 </div>

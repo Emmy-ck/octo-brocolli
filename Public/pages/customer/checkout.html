@@ -5,14 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - Customatch</title>
     
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    <!-- Custom Styling -->
-    <link rel="stylesheet" href="../css/style.css">
+    <!-- Custom Global Styling -->
+    <link rel="stylesheet" href="../../css/style.css">
     
     <style>
         .checkout-container {
@@ -338,7 +335,7 @@
     <header class="p-xl border-bottom">
         <div class="container flex-between">
             <div style="display: flex; align-items: center; gap: var(--spacing-md);">
-                <a href="../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
+                <a href="../../index.html" style="text-decoration: none; display: flex; align-items: center; gap: var(--spacing-md);">
                     <i class="fas fa-arrow-left" style="color: var(--primary);"></i>
                 </a>
                 <div>
@@ -372,7 +369,7 @@
                             <span style="color: var(--text-primary); font-weight: 600; margin-left: var(--spacing-md);" id="designFlavor">Vanilla</span>
                         </div>
                         <div>
-                            <button class="form-input" style="background: rgba(118, 153, 212, 0.1); cursor: pointer; text-align: left; padding: var(--spacing-lg);" onclick="window.location.href = 'customize.html'">
+                            <button class="form-input" style="background: rgba(118, 153, 212, 0.1); cursor: pointer; text-align: left; padding: var(--spacing-lg);" onclick="window.location.href = '../customize.html'">
                                 <i class="fas fa-edit"></i> Edit Design
                             </button>
                         </div>
@@ -394,7 +391,7 @@
                             </div>
                         </div>
                     </div>
-                    <button class="form-input" style="background: rgba(118, 153, 212, 0.1); cursor: pointer; margin-top: var(--spacing-lg);" onclick="window.location.href = 'providers.html'">
+                    <button class="form-input" style="background: rgba(118, 153, 212, 0.1); cursor: pointer; margin-top: var(--spacing-lg);" onclick="window.location.href = './providers.html'">
                         <i class="fas fa-search"></i> Change Baker
                     </button>
                 </div>
@@ -618,7 +615,7 @@
             };
 
             sessionStorage.setItem('orderData', JSON.stringify(orderData));
-            window.location.href = 'payment.html';
+            window.location.href = './confirmation.html';
         }
 
         // Initialize

@@ -1,0 +1,185 @@
+{
+  "users": {
+    "customer": {
+      "id": "customer-001",
+      "name": "John Customer",
+      "email": "customer@test.com",
+      "password": "TestPassword123",
+      "role": "customer",
+      "createdAt": "2026-04-02T00:00:00Z"
+    },
+    "baker": {
+      "id": "baker-001",
+      "name": "Jane Baker",
+      "email": "baker@test.com",
+      "password": "BakerPass123",
+      "role": "baker",
+      "createdAt": "2026-04-02T00:00:00Z"
+    },
+    "admin": {
+      "id": "admin-001",
+      "name": "Admin User",
+      "email": "admin@test.com",
+      "password": "AdminPass123",
+      "role": "admin",
+      "createdAt": "2026-04-02T00:00:00Z"
+    }
+  },
+  "cakes": {
+    "vanilla": {
+      "id": "cake-001",
+      "name": "Vanilla Cake",
+      "basePrice": 25.00,
+      "sizes": ["6-inch", "8-inch", "10-inch"],
+      "flavors": ["vanilla", "chocolate", "strawberry"],
+      "toppings": ["sprinkles", "whipped-cream", "nuts", "chocolate-chips"]
+    },
+    "chocolate": {
+      "id": "cake-002",
+      "name": "Chocolate Cake",
+      "basePrice": 30.00,
+      "sizes": ["6-inch", "8-inch", "10-inch"],
+      "flavors": ["dark-chocolate", "milk-chocolate", "chocolate-fudge"],
+      "toppings": ["chocolate-shavings", "whipped-cream", "berries"]
+    }
+  },
+  "customizations": {
+    "option1": {
+      "size": "8-inch",
+      "flavor": "vanilla",
+      "topping": "whipped-cream",
+      "message": "Happy Birthday!",
+      "deliveryDate": "2026-04-15",
+      "quantity": 1
+    },
+    "option2": {
+      "size": "10-inch",
+      "flavor": "chocolate",
+      "topping": "chocolate-shavings",
+      "message": "Congratulations!",
+      "deliveryDate": "2026-04-20",
+      "quantity": 2
+    }
+  },
+  "orders": {
+    "customer_order_001": {
+      "id": "order-001",
+      "customerId": "customer-001",
+      "cakeId": "cake-001",
+      "customization": {
+        "size": "8-inch",
+        "flavor": "vanilla",
+        "topping": "whipped-cream",
+        "message": "Happy Birthday!"
+      },
+      "quantity": 1,
+      "totalPrice": 25.00,
+      "status": "pending",
+      "orderDate": "2026-04-02T10:30:00Z",
+      "deliveryDate": "2026-04-15T14:00:00Z",
+      "deliveryProvider": "fast-delivery"
+    },
+    "customer_order_002": {
+      "id": "order-002",
+      "customerId": "customer-001",
+      "cakeId": "cake-002",
+      "customization": {
+        "size": "10-inch",
+        "flavor": "dark-chocolate",
+        "topping": "chocolate-shavings",
+        "message": "Congratulations!"
+      },
+      "quantity": 2,
+      "totalPrice": 60.00,
+      "status": "confirmed",
+      "orderDate": "2026-04-02T11:00:00Z",
+      "deliveryDate": "2026-04-20T14:00:00Z",
+      "deliveryProvider": "standard-delivery"
+    }
+  },
+  "deliveryProviders": {
+    "fast-delivery": {
+      "id": "provider-001",
+      "name": "Fast Delivery Co",
+      "estimatedDays": 2,
+      "cost": 10.00,
+      "rating": 4.8
+    },
+    "standard-delivery": {
+      "id": "provider-002",
+      "name": "Standard Delivery",
+      "estimatedDays": 5,
+      "cost": 5.00,
+      "rating": 4.5
+    },
+    "express-delivery": {
+      "id": "provider-003",
+      "name": "Express Courier",
+      "estimatedDays": 1,
+      "cost": 20.00,
+      "rating": 4.9
+    }
+  },
+  "paymentMethods": {
+    "credit-card": {
+      "id": "payment-001",
+      "type": "credit-card",
+      "cardNumber": "4111111111111111",
+      "expiryMonth": "12",
+      "expiryYear": "2028",
+      "cvv": "123"
+    },
+    "debit-card": {
+      "id": "payment-002",
+      "type": "debit-card",
+      "cardNumber": "5555555555554444",
+      "expiryMonth": "06",
+      "expiryYear": "2027",
+      "cvv": "456"
+    }
+  },
+  "bakeryStats": {
+    "totalOrders": 45,
+    "totalRevenue": 1350.00,
+    "pendingOrders": 8,
+    "completedOrders": 37,
+    "averageRating": 4.6,
+    "totalCustomers": 32
+  },
+  "bakerOrders": {
+    "pending": {
+      "id": "order-pending-001",
+      "customerId": "customer-001",
+      "cakeType": "Chocolate Cake",
+      "customizationDetails": "10-inch, dark-chocolate, chocolate-shavings",
+      "quantity": 2,
+      "orderDate": "2026-04-02T11:00:00Z",
+      "deadline": "2026-04-20",
+      "status": "pending",
+      "notes": "Extra sprinkles requested"
+    },
+    "in_progress": {
+      "id": "order-progress-001",
+      "customerId": "customer-001",
+      "cakeType": "Vanilla Cake",
+      "customizationDetails": "8-inch, vanilla, whipped-cream",
+      "quantity": 1,
+      "orderDate": "2026-04-01T14:30:00Z",
+      "deadline": "2026-04-15",
+      "status": "in-progress",
+      "notes": "Birthday message: Happy Birthday!"
+    }
+  },
+  "adminMetrics": {
+    "totalUsers": 128,
+    "activeUsers": 89,
+    "totalOrders": 342,
+    "totalRevenue": 10260.00,
+    "platformStatus": "healthy",
+    "systemHealth": {
+      "uptime": "99.8%",
+      "responseTime": "145ms",
+      "errorRate": "0.02%"
+    }
+  }
+}

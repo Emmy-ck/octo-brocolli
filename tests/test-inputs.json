@@ -1,0 +1,209 @@
+{
+  "customerFlow": {
+    "signup": {
+      "name": "John Customer",
+      "email": "john.customer@test.com",
+      "password": "TestPassword123",
+      "confirmPassword": "TestPassword123"
+    },
+    "login": {
+      "email": "john.customer@test.com",
+      "password": "TestPassword123"
+    },
+    "customization": {
+      "cakeSelection": "vanilla",
+      "size": "8-inch",
+      "flavor": "vanilla",
+      "topping": "whipped-cream",
+      "specialMessage": "Happy Birthday!",
+      "quantity": 1
+    },
+    "checkout": {
+      "firstName": "John",
+      "lastName": "Customer",
+      "email": "john.customer@test.com",
+      "phoneNumber": "555-1234",
+      "address": "123 Cake Street",
+      "city": "Portland",
+      "state": "OR",
+      "zipCode": "97201",
+      "country": "USA",
+      "deliveryProvider": "fast-delivery",
+      "paymentMethod": "credit-card",
+      "cardNumber": "4111111111111111",
+      "cardExpiry": "12/2028",
+      "cvv": "123"
+    },
+    "secondOrderCustomization": {
+      "cakeSelection": "chocolate",
+      "size": "10-inch",
+      "flavor": "dark-chocolate",
+      "topping": "chocolate-shavings",
+      "specialMessage": "Congratulations!",
+      "quantity": 2,
+      "deliveryDate": "2026-04-20"
+    }
+  },
+  "bakerFlow": {
+    "login": {
+      "email": "jane.baker@test.com",
+      "password": "BakerPass123"
+    },
+    "orderActions": {
+      "acceptOrder": {
+        "orderId": "order-pending-001",
+        "estimatedCompletion": "2026-04-17"
+      },
+      "updateOrderStatus": {
+        "orderId": "order-progress-001",
+        "newStatus": "ready-for-delivery",
+        "notes": "Cake is ready for pickup"
+      },
+      "completeOrder": {
+        "orderId": "order-progress-001",
+        "deliveryDate": "2026-04-15T14:00:00Z"
+      }
+    },
+    "qualityCheck": {
+      "orderId": "order-progress-001",
+      "qualityScore": 9,
+      "notes": "Perfect decoration and taste"
+    }
+  },
+  "adminFlow": {
+    "login": {
+      "email": "admin@test.com",
+      "password": "AdminPass123"
+    },
+    "userManagement": {
+      "searchUser": "john.customer@test.com",
+      "suspendUser": {
+        "userId": "customer-001",
+        "reason": "Multiple complaints"
+      },
+      "approveNewBaker": {
+        "bakerId": "baker-001",
+        "bakeryName": "Jane's Custom Cakes"
+      }
+    },
+    "orderManagement": {
+      "filterOrders": {
+        "status": "pending",
+        "dateRange": "last-30-days"
+      },
+      "resolveDispute": {
+        "orderId": "order-001",
+        "resolution": "refund",
+        "amount": 25.00,
+        "reason": "Customer dissatisfaction"
+      }
+    },
+    "systemConfiguration": {
+      "updateDeliveryFee": {
+        "provider": "fast-delivery",
+        "newFee": 12.00
+      },
+      "setPlatformFee": {
+        "percentage": 5.5
+      }
+    },
+    "analytics": {
+      "dateRangeStart": "2026-03-01",
+      "dateRangeEnd": "2026-04-02",
+      "metrics": [
+        "revenue",
+        "new-users",
+        "active-bakers",
+        "average-order-value"
+      ]
+    },
+    "notificationSettings": {
+      "enableOrderNotifications": true,
+      "enablePaymentNotifications": true,
+      "enableDisputeAlerts": true
+    }
+  },
+  "demoUser": {
+    "email": "demo@customatch.com",
+    "password": "Password123"
+  },
+  "testScenarios": {
+    "multipleOrders": {
+      "order1": {
+        "cakeType": "vanilla",
+        "size": "6-inch",
+        "flavor": "vanilla",
+        "topping": "sprinkles",
+        "quantity": 1,
+        "deliveryDate": "2026-04-10"
+      },
+      "order2": {
+        "cakeType": "chocolate",
+        "size": "10-inch",
+        "flavor": "dark-chocolate",
+        "topping": "chocolate-shavings",
+        "quantity": 2,
+        "deliveryDate": "2026-04-20"
+      },
+      "order3": {
+        "cakeType": "vanilla",
+        "size": "8-inch",
+        "flavor": "strawberry",
+        "topping": "whipped-cream",
+        "quantity": 1,
+        "deliveryDate": "2026-04-25"
+      }
+    },
+    "deliveryProviderComparison": {
+      "providers": [
+        {
+          "name": "fast-delivery",
+          "expectedDeliveryDays": 2,
+          "cost": 10.00
+        },
+        {
+          "name": "standard-delivery",
+          "expectedDeliveryDays": 5,
+          "cost": 5.00
+        },
+        {
+          "name": "express-delivery",
+          "expectedDeliveryDays": 1,
+          "cost": 20.00
+        }
+      ]
+    },
+    "paymentMethods": [
+      "credit-card",
+      "debit-card"
+    ],
+    "trackingStatuses": [
+      "confirmed",
+      "in-preparation",
+      "ready-for-delivery",
+      "in-transit",
+      "delivered"
+    ]
+  },
+  "formValidation": {
+    "invalidEmail": "not-an-email",
+    "weakPassword": "weak123",
+    "shortPassword": "Pass1",
+    "missingName": "",
+    "invalidPhoneNumber": "123",
+    "invalidZipCode": "12",
+    "invalidCardNumber": "1234567890123456"
+  },
+  "errorScenarios": {
+    "duplicateEmail": "john.customer@test.com",
+    "incorrectPassword": "WrongPassword123",
+    "noDeliveryProvider": null,
+    "emptyCart": [],
+    "expiredSession": true
+  },
+  "loadTestData": {
+    "concurrentUsers": 10,
+    "requestsPerSecond": 100,
+    "testDuration": "5m"
+  }
+}
